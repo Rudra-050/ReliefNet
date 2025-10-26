@@ -4924,8 +4924,9 @@ app.post('/chat', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server + Socket.IO started on port ${PORT} (http://localhost:${PORT})`);
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+server.listen(PORT, HOST, () => {
+  console.log(`Server + Socket.IO started on port ${PORT} (http://${HOST}:${PORT})`);
 });
 
 
