@@ -317,9 +317,13 @@ const connectedUsers = {};
 const app = express();
 // Trust the first proxy (needed to detect HTTPS when behind a reverse proxy)
 app.set('trust proxy', 1);
-// Enforce HTTPS in production for GET/HEAD requests (avoid redirecting POST webhooks)
+// Enforce HTTPS in production for GET/HEAD requests (avoid redirecting POST webhooks and health checks)
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
+    // Skip HTTPS redirect for health endpoint
+    if (req.path === '/health') {
+      return next();
+    }
     if (!req.secure && (req.method === 'GET' || req.method === 'HEAD')) {
       return res.redirect(301, 'https://' + req.headers.host + req.originalUrl);
     }
