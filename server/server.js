@@ -2,7 +2,31 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
+
+// Load Firebase service account from env (for Railway/production) or file (for local dev)
+let serviceAccount;
+if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
+  // Production: use base64-encoded service account from env
+  const decoded = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf-8');
+  serviceAccount = JSON.parse(decoded);
+} else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+  // Production: use individual env vars
+  serviceAccount = {
+    type: 'service_account',
+    project_id: process.env.FIREBASE_PROJECT_ID,
+    private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: process.env.FIREBASE_CLIENT_EMAIL
+  };
+} else {
+  // Local dev: use file
+  try {
+    serviceAccount = require('./serviceAccountKey.json');
+  } catch (err) {
+    console.error('⚠️  Firebase service account not found. Set FIREBASE_SERVICE_ACCOUNT_BASE64 or provide serviceAccountKey.json');
+    process.exit(1);
+  }
+}
+
 const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
