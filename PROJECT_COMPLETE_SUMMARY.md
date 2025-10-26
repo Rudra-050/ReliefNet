@@ -88,11 +88,8 @@
 ### 3. Security & Configuration
 
 #### Credential Management:
-- ✅ **.env File** - All secrets in environment variables
-- ✅ **.gitignore** - Protects sensitive files
-- ✅ **.env.example** - Template for team setup
-- ✅ **CREDENTIALS.md** - Secure reference document
-- ✅ **README.md** - Public documentation
+ ✅ **SECURITY.md** - Guidelines for secret handling and rotation
+ ✅ **CI** - Continuous Integration setup in `.github/workflows/ci.yml`; optional Railway deploy workflow added (`deploy-railway.yml`)
 
 #### Protected Files:
 ```
@@ -105,10 +102,10 @@ node_modules/
 uploads/
 logs/
 ```
-
----
-
-## 📊 Test Results
+ Set in environment (Railway or local .env):
+ SENDGRID_API_KEY=SG.your_sendgrid_api_key_here
+ FIREBASE_SERVICE_ACCOUNT_BASE64=your_base64
+ Note: Replace values with your own; do not commit real secrets. See `SECURITY.md` for rotation and handling.
 
 ### Backend Testing:
 ```
