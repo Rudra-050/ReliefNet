@@ -53,8 +53,8 @@ class ChatViewModel(
     
     companion object {
         private const val TAG = "ChatViewModel"
-        private const val SERVER_URL = "http://10.0.2.2:5000" // For Android emulator
-        // Use "http://localhost:5000" for physical device on same network
+        // Use Railway production URL - will work on all devices/emulator
+        private const val SERVER_URL = "https://reliefnet-production-e119.up.railway.app"
     }
 
     private var socket: Socket? = null

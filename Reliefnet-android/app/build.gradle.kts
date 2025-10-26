@@ -31,8 +31,8 @@ android {
             buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:5000/\"")
         }
         release {
-            // TODO: Replace with your production API endpoint (HTTPS strongly recommended)
-            buildConfigField("String", "BASE_URL", "\"https://api.yourdomain.com/\"")
+            // Production API on Railway
+            buildConfigField("String", "BASE_URL", "\"https://reliefnet-production-e119.up.railway.app/\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

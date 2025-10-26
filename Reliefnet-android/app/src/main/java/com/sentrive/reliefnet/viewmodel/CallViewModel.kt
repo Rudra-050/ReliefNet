@@ -26,7 +26,8 @@ class CallViewModel(app: Application) : AndroidViewModel(app) {
 
     companion object {
         private const val TAG = "CallViewModel"
-        private const val SERVER_URL = "http://10.0.2.2:5000" // Change if needed
+        // Use Railway production URL - will work on all devices/emulator
+        private const val SERVER_URL = "https://reliefnet-production-e119.up.railway.app"
     }
 
     private var socket: Socket? = null
