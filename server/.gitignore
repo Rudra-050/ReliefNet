@@ -1,0 +1,48 @@
+# Environment variables (contains secrets)
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Credentials documentation (contains sensitive info)
+CREDENTIALS.md
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Service account keys (Firebase)
+serviceAccountKey.json
+serviceAccountKey.json.json
+firebase-service-account.json
+
+# Test files
+test-*.ps1
+test*.js
+!testServer.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Uploads directory (user content)
+uploads/
+!uploads/.gitkeep
+
+# Build files
+dist/
+build/
+
+# Railway
+.railway/

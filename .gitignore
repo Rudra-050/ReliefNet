@@ -1,0 +1,76 @@
+# Root .gitignore for ReliefNet (Android + Node + Docs)
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Editors/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.iml
+
+# Node (server)
+server/node_modules/
+server/npm-debug.log*
+server/yarn-error.log*
+server/.env
+server/.env.local
+server/.env.*.local
+server/.env.production
+server/CREDENTIALS.md
+server/serviceAccountKey.json
+server/serviceAccountKey.json.json
+server/firebase-service-account.json
+server/uploads/
+!server/uploads/.gitkeep
+server/dist/
+server/build/
+server/.railway/
+
+# Android (Reliefnet-android)
+Reliefnet-android/.gradle/
+Reliefnet-android/.idea/
+Reliefnet-android/local.properties
+Reliefnet-android/**/build/
+Reliefnet-android/**/captures/
+Reliefnet-android/.cxx/
+Reliefnet-android/**/.externalNativeBuild/
+Reliefnet-android/*.iml
+Reliefnet-android/**/navigation.json
+Reliefnet-android/**/generated/
+Reliefnet-android/**/outputs/
+
+# Keystores and signing
+Reliefnet-android/**/*.keystore
+Reliefnet-android/**/*.keystore.jks
+Reliefnet-android/**/*.jks
+Reliefnet-android/**/keystore.properties
+
+# Gradle wrapper caches (keep wrapper JARs and scripts)
+.gradle/
+**/.gradle/
+
+# Logs
+logs/
+*.log
+
+# Coverage/Reports
+coverage/
+**/reports/
+
+# Python (rare but safe)
+__pycache__/
+*.pyc
+
+# Misc
+*.orig
+*.rej
+
+# Ignore local PowerShell test scripts
+server/test-*.ps1
+server/test*.js
+!server/testServer.js
