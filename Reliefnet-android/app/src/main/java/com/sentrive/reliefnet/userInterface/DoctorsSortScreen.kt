@@ -44,6 +44,9 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.DrawerValue
 import com.sentrive.reliefnet.userInterface.components.AppDrawer
 import kotlinx.coroutines.launch
+import com.sentrive.reliefnet.repository.ReliefNetRepository
+import androidx.compose.ui.platform.LocalContext
+import com.sentrive.reliefnet.network.models.Doctor as ApiDoctor
 
 @Composable
 fun DiscoverScreen(navHostController: NavHostController) {
@@ -53,6 +56,36 @@ fun DiscoverScreen(navHostController: NavHostController) {
     val mentalSupportCardWidth = screeWidth - 10
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val repository = remember { ReliefNetRepository() }
+    
+    // State for doctors
+    var doctors by remember { mutableStateOf<List<ApiDoctor>>(emptyList()) }
+    var isLoadingDoctors by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var selectedCategory by remember { mutableStateOf("Psychologist") }
+    
+    // Fetch doctors when screen loads or category changes
+    LaunchedEffect(selectedCategory) {
+        isLoadingDoctors = true
+        errorMessage = null
+        try {
+            val result = repository.getDoctors(
+                specialty = selectedCategory,
+                limit = 50
+            )
+            result.onSuccess { doctorList ->
+                doctors = doctorList
+                isLoadingDoctors = false
+            }.onFailure { error ->
+                errorMessage = error.message ?: "Failed to load doctors"
+                isLoadingDoctors = false
+            }
+        } catch (e: Exception) {
+            errorMessage = e.message ?: "An error occurred"
+            isLoadingDoctors = false
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -119,13 +152,17 @@ fun DiscoverScreen(navHostController: NavHostController) {
         ) {
 
             // Pills row
-           PillsRow()
+           PillsRow(selectedCategory) { category ->
+               selectedCategory = category
+           }
 
 //            Mental health Support Card
             MentalHealthSupportCard(navHostController,0xFFFFD6F7,mentalSupportCardWidth.dp)
 
             //Lined Tab
-            LinedTab()
+            LinedTab(selectedCategory) { category ->
+                selectedCategory = category
+            }
 
             //filter Tab
             FilterTab()
@@ -133,7 +170,12 @@ fun DiscoverScreen(navHostController: NavHostController) {
 
 
             //Doctor's Card
-            DoctorCard()
+            DoctorCard(
+                doctors = doctors,
+                isLoading = isLoadingDoctors,
+                errorMessage = errorMessage,
+                navHostController = navHostController
+            )
 
         }
     }
@@ -141,8 +183,8 @@ fun DiscoverScreen(navHostController: NavHostController) {
 }
 
 @Composable
-fun PillsRow(){
-    val pills = listOf("Mental Health", "Home Nurse", "Postpartum Care")
+fun PillsRow(selectedPill: String, onPillSelected: (String) -> Unit){
+    val pills = listOf("Psychologist", "Therapist", "Psychiatrist")
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,11 +202,12 @@ fun PillsRow(){
     ) {
         items(pills) { pill ->
             Button(
-                onClick = { /* Handle selection */ },
+                onClick = { onPillSelected(pill) },
                 shape = RoundedCornerShape(4.dp), // rounded corners
                 border = BorderStroke(1.dp, Color.White), // outline color white
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color.White // text color
+                    contentColor = Color.White,
+                    containerColor = if (pill == selectedPill) Color.White.copy(alpha = 0.3f) else Color.Transparent
                 )
             ) {
                 Text(
@@ -245,7 +288,7 @@ fun MentalHealthSupportCard(navHostController: NavHostController,color:Long,widt
 }
 
 @Composable
-fun LinedTab(){
+fun LinedTab(selectedTab: String, onTabSelected: (String) -> Unit){
     Box(
         modifier = Modifier
             .padding(top = 25.dp, start = 7.dp)
@@ -254,7 +297,7 @@ fun LinedTab(){
         contentAlignment = Alignment.Center
     ) {
         val tabs = listOf("Psychologist", "Therapist", "Psychiatrist")
-        var selectedTabIndex by remember { mutableStateOf(0) }
+        var selectedTabIndex by remember { mutableStateOf(tabs.indexOf(selectedTab).takeIf { it >= 0 } ?: 0) }
 
         TabRow(
             selectedTabIndex = selectedTabIndex,
@@ -268,7 +311,10 @@ fun LinedTab(){
             tabs.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
+                    onClick = { 
+                        selectedTabIndex = index
+                        onTabSelected(title)
+                    },
                     selectedContentColor = Color.Blue,
                     unselectedContentColor = Color.Gray,
                     text = {
@@ -325,130 +371,228 @@ fun FilterTab(){
     }
 }
 
-data class Doctor(val name: String,val type :String , val experience :Int,val price:Int,val rating: Float,val reviews : Int,val imageRes : Int)
-
 @Composable
-fun DoctorCard() {
-    val doctors = listOf(
-        Doctor("Dr. Priya Sharma", "Clinical Psychologist", 8, 1200, 4.9F, 124, R.drawable.applelogo),
-        Doctor("Dr. Priya Sharma", "Clinical Psychologist", 8, 1200, 4.9F, 124, R.drawable.applelogo)
-    )
-
-    LazyColumn(
+fun DoctorCard(
+    doctors: List<ApiDoctor>,
+    isLoading: Boolean,
+    errorMessage: String?,
+    navHostController: NavHostController
+) {
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 25.dp),
-        horizontalAlignment = Alignment.CenterHorizontally // ✅ Align cards in center
+            .padding(top = 25.dp)
     ) {
-        items(doctors) { doctor ->
-            Column(
-                modifier = Modifier
-                    .width(342.dp) // ✅ Set consistent card width
-            ) {
-                Row(Modifier.fillMaxWidth()) {
-                    Column {
-                        Box(
-                            Modifier
-                                .size(80.dp)
-                                .clip(CircleShape)
-                                .background(Color.LightGray),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(doctor.imageRes),
-                                contentDescription = "Doctor Profile"
-                            )
-                        }
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            
+            errorMessage != null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         Text(
-                            "${doctor.experience} +years",
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                fontFamily = alegreyaSansFontFamily,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
-                        Text("Experince")
-                    }
-
-                    Spacer(Modifier.width(16.dp))
-
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            doctor.name,
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                fontSize = 18.sp,
-                                fontFamily = alegreyaSansFontFamily,
-                                fontWeight = FontWeight.Bold
-                            )
+                            text = errorMessage,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                         Text(
-                            doctor.type,
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                fontFamily = alegreyaSansFontFamily,
-                                fontWeight = FontWeight.Normal
-                            )
+                            text = "Please check your connection and try again",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
                         )
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(R.drawable.star),
-                                contentDescription = "rating",
-                                modifier = Modifier.size(26.dp), // ⬅ original size kept
-                                tint = Color(0xFFFFD700)
-                            )
-                            Text("${doctor.rating}/session (${doctor.reviews} reviews)")
-                        }
-
-                        Spacer(Modifier.height(12.dp))
-
-                        Text(
-                            "₹ ${doctor.price}/session",
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                fontFamily = alegreyaSansFontFamily,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
-                        Text("Starting At")
                     }
                 }
+            }
+            
+            doctors.isEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "No doctors found",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Try selecting a different category",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
+            
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(doctors) { doctor ->
+                        DoctorCardItem(doctor = doctor, navHostController = navHostController)
+                    }
+                }
+            }
+        }
+    }
+}
 
+@Composable
+fun DoctorCardItem(doctor: ApiDoctor, navHostController: NavHostController) {
+    Column(
+        modifier = Modifier
+            .width(342.dp)
+            .padding(bottom = 16.dp)
+            .clickable {
+                doctor.id?.let { doctorId ->
+                    navHostController.navigate("Booking/$doctorId")
+                }
+            }
+    ) {
+        Row(Modifier.fillMaxWidth()) {
+            Column {
+                Box(
+                    Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFE3F2FD)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (!doctor.photoUrl.isNullOrBlank()) {
+                        // TODO: Load image from URL using Coil or Glide
+                        Text(
+                            text = doctor.name.firstOrNull()?.toString() ?: "D",
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1976D2)
+                        )
+                    } else {
+                        Text(
+                            text = doctor.name.firstOrNull()?.toString() ?: "D",
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1976D2)
+                        )
+                    }
+                }
                 Spacer(Modifier.height(8.dp))
+                Text(
+                    "${doctor.experience ?: "0 years"}",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontFamily = alegreyaSansFontFamily,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+                Text("Experience")
+            }
+
+            Spacer(Modifier.width(16.dp))
+
+            Column(Modifier.weight(1f)) {
+                Text(
+                    doctor.name,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 18.sp,
+                        fontFamily = alegreyaSansFontFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Text(
+                    doctor.specialty ?: doctor.specialization ?: "Healthcare Professional",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontFamily = alegreyaSansFontFamily,
+                        fontWeight = FontWeight.Normal
+                    )
+                )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Button(
-                        onClick = {},
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(32.dp)
-                    ) {
-                        Text("Book Session")
-                    }
-
-                    Spacer(Modifier.width(16.dp))
-
-                    Card(
-                        modifier = Modifier.width(30.dp),
-                        border = BorderStroke(1.dp, Color.Black),
-                        shape = RoundedCornerShape(4.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .background(Color.White),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.message),
-                                contentDescription = "message",
-                                modifier = Modifier
-                                    .size(26.dp)
-                                    .clickable(onClick = {}),
-                                tint = Color.Blue
-                            )
-                        }
-                    }
+                    Icon(
+                        painter = painterResource(R.drawable.star),
+                        contentDescription = "rating",
+                        modifier = Modifier.size(26.dp),
+                        tint = Color(0xFFFFD700)
+                    )
+                    Text("${doctor.rating}/session (${doctor.reviewCount} reviews)")
                 }
-                Spacer(Modifier.height(16.dp))
+
+                Spacer(Modifier.height(12.dp))
+
+                Text(
+                    "₹ ${doctor.price.toInt()}${doctor.priceUnit ?: "/session"}",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontFamily = alegreyaSansFontFamily,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+                Text("Starting At")
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Button(
+                onClick = {
+                    doctor.id?.let { doctorId ->
+                        navHostController.navigate("Booking/$doctorId")
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(32.dp)
+            ) {
+                Text("Book Session")
+            }
+
+            Spacer(Modifier.width(16.dp))
+
+            Card(
+                modifier = Modifier.width(30.dp),
+                border = BorderStroke(1.dp, Color.Black),
+                shape = RoundedCornerShape(4.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .background(Color.White),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.message),
+                        contentDescription = "message",
+                        modifier = Modifier
+                            .size(26.dp)
+                            .clickable {
+                                doctor.id?.let { doctorId ->
+                                    navHostController.navigate("doctor_chat/$doctorId")
+                                }
+                            },
+                        tint = Color.Blue
+                    )
+                }
             }
         }
     }

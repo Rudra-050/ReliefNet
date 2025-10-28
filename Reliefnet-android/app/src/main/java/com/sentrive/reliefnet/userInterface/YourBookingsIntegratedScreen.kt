@@ -26,6 +26,10 @@ import com.sentrive.reliefnet.utils.TokenManager
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import com.sentrive.reliefnet.userInterface.components.AppDrawer
+import com.sentrive.reliefnet.userInterface.MainBottomBar
+import androidx.compose.ui.res.painterResource
+import com.sentrive.reliefnet.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +37,7 @@ fun YourBookingsIntegratedScreen(navHostController: NavHostController) {
     val context = LocalContext.current
     val repository = remember { ReliefNetRepository() }
     val scope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     
     var bookings by remember { mutableStateOf<List<Booking>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -64,6 +69,14 @@ fun YourBookingsIntegratedScreen(navHostController: NavHostController) {
         }
     }
     
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppDrawer(navHostController = navHostController) {
+                scope.launch { drawerState.close() }
+            }
+        }
+    ) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,8 +85,19 @@ fun YourBookingsIntegratedScreen(navHostController: NavHostController) {
                     IconButton(onClick = { navHostController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                     }
+                },
+                actions = {
+                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                        Icon(
+                            painter = painterResource(R.drawable.menu),
+                            contentDescription = "Menu"
+                        )
+                    }
                 }
             )
+        },
+        bottomBar = {
+            MainBottomBar(navHostController)
         }
     ) { padding ->
         Column(
@@ -211,6 +235,7 @@ fun YourBookingsIntegratedScreen(navHostController: NavHostController) {
                 }
             }
         }
+    }
     }
 }
 
