@@ -27,17 +27,8 @@ android {
 
     buildTypes {
         debug {
-            // Debug: Priority order - ngrok URL > LAN IP > emulator loopback
-            val ngrokUrl = project.findProperty("DEV_NGROK_URL") as String? ?: ""
-            val devHostIp = project.findProperty("DEV_HOST_IP") as String? ?: ""
-            
-            val debugBaseUrl = when {
-                ngrokUrl.isNotBlank() -> "$ngrokUrl/"
-                devHostIp.isNotBlank() -> "http://$devHostIp:5000/"
-                else -> "http://10.0.2.2:5000/"
-            }
-            
-            buildConfigField("String", "BASE_URL", "\"$debugBaseUrl\"")
+            // Use Railway production URL for both debug and release
+            buildConfigField("String", "BASE_URL", "\"https://reliefnet-production-e119.up.railway.app/\"")
         }
         release {
             // Production API on Railway
