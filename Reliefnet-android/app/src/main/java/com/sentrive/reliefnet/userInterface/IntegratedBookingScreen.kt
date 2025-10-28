@@ -282,9 +282,10 @@ fun IntegratedBookingScreen(
                     }
                 } else {
                     item {
+                        val rows = (availableSlots.size / 2) + (availableSlots.size % 2)
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
-                            modifier = Modifier.height((availableSlots.size / 2 + availableSlots.size % 2) * 70.dp),
+                            modifier = Modifier.height((rows * 70).dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
