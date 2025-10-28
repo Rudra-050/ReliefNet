@@ -27,9 +27,16 @@ android {
 
     buildTypes {
         debug {
-            // Debug: use LAN IP if provided, else emulator loopback (10.0.2.2)
+            // Debug: Priority order - ngrok URL > LAN IP > emulator loopback
+            val ngrokUrl = project.findProperty("DEV_NGROK_URL") as String? ?: ""
             val devHostIp = project.findProperty("DEV_HOST_IP") as String? ?: ""
-            val debugBaseUrl = if (devHostIp.isNotBlank()) "http://$devHostIp:5000/" else "http://10.0.2.2:5000/"
+            
+            val debugBaseUrl = when {
+                ngrokUrl.isNotBlank() -> "$ngrokUrl/"
+                devHostIp.isNotBlank() -> "http://$devHostIp:5000/"
+                else -> "http://10.0.2.2:5000/"
+            }
+            
             buildConfigField("String", "BASE_URL", "\"$debugBaseUrl\"")
         }
         release {

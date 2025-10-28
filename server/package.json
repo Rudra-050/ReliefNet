@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "dev:lan": "powershell -ExecutionPolicy Bypass -File ./start-dev-lan.ps1"
+    "dev:lan": "powershell -ExecutionPolicy Bypass -File ./start-dev-lan.ps1",
+    "dev:ngrok": "powershell -ExecutionPolicy Bypass -File ./start-ngrok.ps1"
   },
   "keywords": [],
   "author": "",
