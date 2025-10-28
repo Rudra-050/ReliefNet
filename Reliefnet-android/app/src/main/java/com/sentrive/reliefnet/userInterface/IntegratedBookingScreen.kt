@@ -4,6 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.ui.viewinterop.AndroidView
@@ -16,7 +19,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -60,12 +67,18 @@ fun IntegratedBookingScreen(
     var availableSlots by remember { mutableStateOf<List<TimeSlot>>(emptyList()) }
     var selectedSlot by remember { mutableStateOf<TimeSlot?>(null) }
     var notes by remember { mutableStateOf("") }
+    var symptoms by remember { mutableStateOf("") }
+    var appointmentType by remember { mutableStateOf("Online Consultation") }
+    var isAppointmentTypeExpanded by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var showSuccessDialog by remember { mutableStateOf(false) }
     var bookingId by remember { mutableStateOf<String?>(null) }
     var selectedDate by remember { mutableStateOf(currentDateString()) }
     var isBooking by remember { mutableStateOf(false) }
+    var currentMonth by remember { mutableStateOf(Calendar.getInstance()) }
+    
+    val appointmentTypes = listOf("Online Consultation", "In-Person Visit", "Home Visit")
     
     // Fetch doctor details and available slots for selected date
     LaunchedEffect(doctorId, selectedDate) {
@@ -185,55 +198,16 @@ fun IntegratedBookingScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Doctor info
+                // Select Date section
                 item {
-                    doctor?.let { doc ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                AsyncImage(
-                                    model = doc.photoUrl,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(64.dp)
-                                )
-                                Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
-                                    AndroidView(factory = { context ->
-                                        TextView(context).apply {
-                                            text = "Dr. ${doc.name}"
-                                            textSize = 18f
-                                            setTypeface(null, Typeface.BOLD)
-                                        }
-                                    })
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    AndroidView(factory = { context ->
-                                        TextView(context).apply {
-                                            text = doc.specialization
-                                            textSize = 14f
-                                        }
-                                    })
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    AndroidView(factory = { context ->
-                                        TextView(context).apply {
-                                            text = "₹${doc.price.toInt()} per session"
-                                            textSize = 16f
-                                            setTypeface(null, Typeface.BOLD)
-                                            setTextColor(android.graphics.Color.parseColor("#6200EE"))
-                                        }
-                                    })
-                                }
-                            }
-                        }
-                    }
+                    Text(
+                        text = "Select Date",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 
-                // Date selector
+                // Month navigation
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -241,27 +215,48 @@ fun IntegratedBookingScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Select Time Slot",
+                            text = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(currentMonth.time),
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            modifier = Modifier.weight(1f)
                         )
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = { selectedDate = shiftDate(selectedDate, -1) }) {
-                                Icon(Icons.Default.ChevronLeft, contentDescription = "Previous day")
+                        Row {
+                            IconButton(onClick = { 
+                                currentMonth = (currentMonth.clone() as Calendar).apply { 
+                                    add(Calendar.MONTH, -1) 
+                                }
+                            }) {
+                                Icon(Icons.Default.ChevronLeft, "Previous month", tint = Color(0xFF6200EE))
                             }
-                            Text(text = formatDate(selectedDate), style = MaterialTheme.typography.bodyMedium)
-                            IconButton(onClick = { selectedDate = shiftDate(selectedDate, 1) }) {
-                                Icon(Icons.Default.ChevronRight, contentDescription = "Next day")
+                            IconButton(onClick = { 
+                                currentMonth = (currentMonth.clone() as Calendar).apply { 
+                                    add(Calendar.MONTH, 1) 
+                                }
+                            }) {
+                                Icon(Icons.Default.ChevronRight, "Next month", tint = Color(0xFF6200EE))
                             }
                         }
                     }
                 }
-
-                // Available time slots
+                
+                // Calendar grid
                 item {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    CalendarView(
+                        currentMonth = currentMonth,
+                        selectedDate = selectedDate,
+                        onDateSelected = { selectedDate = it }
+                    )
                 }
                 
+                // Select Time Slot section
+                item {
+                    Text(
+                        text = "Select Time Slot",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                // Time slots grid
                 if (availableSlots.isEmpty()) {
                     item {
                         Card(
@@ -286,95 +281,295 @@ fun IntegratedBookingScreen(
                         }
                     }
                 } else {
-                    items(availableSlots) { slot ->
-                        SlotCard(
-                            date = selectedDate,
-                            slot = slot,
-                            isSelected = (selectedSlot?.startTime == slot.startTime && selectedSlot?.endTime == slot.endTime),
-                            onClick = { selectedSlot = slot }
-                        )
+                    item {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.height((availableSlots.size / 2 + availableSlots.size % 2) * 70.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(availableSlots) { slot ->
+                                TimeSlotButton(
+                                    slot = slot,
+                                    isSelected = selectedSlot == slot,
+                                    onClick = { selectedSlot = slot }
+                                )
+                            }
+                        }
                     }
                 }
                 
-                // Notes
+                // Appointment Type
+                item {
+                    Text(
+                        text = "Appointment Type",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                
+                item {
+                    ExposedDropdownMenuBox(
+                        expanded = isAppointmentTypeExpanded,
+                        onExpandedChange = { isAppointmentTypeExpanded = it }
+                    ) {
+                        OutlinedTextField(
+                            value = appointmentType,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isAppointmentTypeExpanded)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
+                            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = Color(0xFF6200EE),
+                                focusedLabelColor = Color(0xFF6200EE)
+                            )
+                        )
+                        ExposedDropdownMenu(
+                            expanded = isAppointmentTypeExpanded,
+                            onDismissRequest = { isAppointmentTypeExpanded = false }
+                        ) {
+                            appointmentTypes.forEach { type ->
+                                DropdownMenuItem(
+                                    text = { Text(type) },
+                                    onClick = {
+                                        appointmentType = type
+                                        isAppointmentTypeExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+                
+                // Symptoms / Reason for Visit
+                item {
+                    Text(
+                        text = "Symptoms / Reason for Visit",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                
+                item {
+                    OutlinedTextField(
+                        value = symptoms,
+                        onValueChange = { symptoms = it },
+                        placeholder = { Text("e.g. Fever, Cough, Headache") },
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 2
+                    )
+                }
+                
+                // Additional Notes
+                item {
+                    Text(
+                        text = "Additional Notes (Optional)",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                
                 item {
                     OutlinedTextField(
                         value = notes,
                         onValueChange = { notes = it },
-                        label = { Text("Notes (Optional)") },
-                        placeholder = { Text("Any specific requirements?") },
+                        placeholder = { Text("Any other details for the doctor") },
                         modifier = Modifier.fillMaxWidth(),
                         maxLines = 3
                     )
                 }
                 
-                // Book button
+                // Consultation Fee
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Consultation Fee:",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "₹${doctor?.price?.toInt() ?: 0}",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp
+                        )
+                    }
+                }
+                
+                // Proceed to Payment button
                 item {
                     Button(
                         onClick = {
-                            scope.launch {
-                                isBooking = true
-                                try {
-                                    val doc = doctor
-                                    if (doc == null || selectedSlot == null) {
-                                        errorMessage = "Missing required information"
-                                        isBooking = false
-                                        return@launch
-                                    }
-                                    
-                                    // Create PhonePe payment order
-                                    val paymentRequest = CreatePaymentOrderPhonePeRequest(
-                                        amount = doc.price,
-                                        doctorId = doc.id ?: "",
-                                        appointmentDate = selectedDate,
-                                        appointmentTime = selectedSlot!!.startTime
-                                    )
-                                    
-                                    val paymentResponse = repository.createPhonePeOrder(paymentRequest)
-                                    if (paymentResponse.isSuccessful && paymentResponse.body() != null) {
-                                        val paymentBody = paymentResponse.body()!!
-                                        val paymentUrl = paymentBody.paymentUrl
-                                        
-                                        // Store transaction ID for later confirmation
-                                        bookingId = paymentBody.merchantTransactionId
-                                        
-                                        // Launch PhonePe payment
-                                        context.openPhonePePayment(paymentUrl)
-                                        
-                                        // Navigate to payment status screen
-                                        navHostController.navigate(
-                                            "payment-status/${paymentBody.merchantTransactionId}/${doc.id}/$selectedDate/${selectedSlot!!.startTime}/${notes.ifBlank { "none" }}"
-                                        )
-                                    } else {
-                                        errorMessage = paymentResponse.errorBody()?.string() ?: "Failed to create payment order"
-                                    }
-                                } catch (e: Exception) {
-                                    errorMessage = e.message ?: "Failed to initiate payment"
-                                } finally {
-                                    isBooking = false
-                                }
+                            // Navigate to payment screen instead of directly processing payment
+                            val doc = doctor
+                            if (doc != null && selectedSlot != null) {
+                                navHostController.navigate(
+                                    "payment-screen/${doc.id}/$selectedDate/${selectedSlot!!.startTime}/${selectedSlot!!.endTime}/${doc.price.toInt()}/$appointmentType/${symptoms.ifBlank { "None" }}/${notes.ifBlank { "None" }}"
+                                )
                             }
                         },
-                        enabled = selectedSlot != null && !isBooking,
+                        enabled = selectedSlot != null && symptoms.isNotBlank(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF6200EE)
+                        )
                     ) {
-                        if (isBooking) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        } else {
-                            Icon(Icons.Default.Payment, contentDescription = null)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Pay ${selectedSlot?.startTime ?: ""} - ₹" + (doctor?.price?.toInt()?.toString() ?: "500"),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold
-                            )
+                        Text(
+                            text = "Proceed to Payment",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TimeSlotButton(
+    slot: TimeSlot,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            containerColor = if (isSelected) Color(0xFF6200EE) else Color(0xFFE8E8E8),
+            contentColor = if (isSelected) Color.White else Color.Black
+        )
+    ) {
+        Text(
+            text = "${slot.startTime} -\n${slot.endTime}",
+            textAlign = TextAlign.Center,
+            fontSize = 14.sp,
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+        )
+    }
+}
+
+@Composable
+fun CalendarView(
+    currentMonth: Calendar,
+    selectedDate: String,
+    onDateSelected: (String) -> Unit
+) {
+    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    
+    Column {
+        // Day headers
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            listOf("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT").forEach { day ->
+                Text(
+                    text = day,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        // Calendar dates
+        val calendar = currentMonth.clone() as Calendar
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1
+        val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        
+        val weeks = mutableListOf<List<Int?>>()
+        var currentWeek = MutableList<Int?>(7) { null }
+        
+        // Fill first week
+        for (i in 0 until firstDayOfWeek) {
+            currentWeek[i] = null
+        }
+        
+        for (day in 1..daysInMonth) {
+            val dayOfWeek = (firstDayOfWeek + day - 1) % 7
+            currentWeek[dayOfWeek] = day
+            
+            if (dayOfWeek == 6 || day == daysInMonth) {
+                weeks.add(currentWeek.toList())
+                currentWeek = MutableList(7) { null }
+            }
+        }
+        
+        weeks.forEach { week ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                week.forEach { day ->
+                    if (day != null) {
+                        val dateStr = String.format(
+                            "%04d-%02d-%02d",
+                            currentMonth.get(Calendar.YEAR),
+                            currentMonth.get(Calendar.MONTH) + 1,
+                            day
+                        )
+                        val isSelected = dateStr == selectedDate
+                        val isPast = try {
+                            val date = sdf.parse(dateStr)
+                            date?.before(Date()) == true
+                        } catch (e: Exception) {
+                            false
                         }
+                        
+                        Card(
+                            onClick = { if (!isPast) onDateSelected(dateStr) },
+                            modifier = Modifier
+                                .weight(1f)
+                                .aspectRatio(1f)
+                                .padding(2.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = when {
+                                    isSelected -> Color(0xFF6200EE)
+                                    isPast -> Color.LightGray
+                                    else -> Color.Transparent
+                                }
+                            ),
+                            shape = RoundedCornerShape(if (isSelected) 50 else 0)
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = day.toString(),
+                                    color = when {
+                                        isSelected -> Color.White
+                                        isPast -> Color.Gray
+                                        else -> Color.Black
+                                    },
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }

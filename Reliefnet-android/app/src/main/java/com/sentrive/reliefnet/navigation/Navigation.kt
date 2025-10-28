@@ -88,6 +88,19 @@ fun Navigation(navHostController: NavHostController){
             IntegratedBookingScreen(navHostController, doctorId)
         }
         
+        // Payment Screen
+        composable("payment-screen/{doctorId}/{date}/{startTime}/{endTime}/{amount}/{appointmentType}/{symptoms}/{notes}") { backStackEntry ->
+            val doctorId = backStackEntry.arguments?.getString("doctorId") ?: ""
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            val startTime = backStackEntry.arguments?.getString("startTime") ?: ""
+            val endTime = backStackEntry.arguments?.getString("endTime") ?: ""
+            val amount = backStackEntry.arguments?.getString("amount") ?: "0"
+            val appointmentType = backStackEntry.arguments?.getString("appointmentType") ?: "Online Consultation"
+            val symptoms = backStackEntry.arguments?.getString("symptoms") ?: "None"
+            val notes = backStackEntry.arguments?.getString("notes") ?: "None"
+            PaymentScreen(navHostController, doctorId, date, startTime, endTime, amount, appointmentType, symptoms, notes)
+        }
+        
         composable("SplashScreen") { SplashScreen(navHostController) }
         composable("MentalHealthSupport") { MentalHealthSupport(navHostController) }
         composable("BookingScreenRecord") { BookingScreenRecord(navHostController) }
