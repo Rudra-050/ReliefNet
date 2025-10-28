@@ -4928,7 +4928,11 @@ app.post('/chat', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+// Bind host:
+// - Default: localhost in development (safe for emulator via 10.0.2.2)
+// - Production: 0.0.0.0 (required on Railway)
+// - Override: set HOST env to "0.0.0.0" to allow physical devices on LAN to connect to your PC
+const HOST = process.env.HOST || (process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost');
 server.listen(PORT, HOST, () => {
   console.log(`Server + Socket.IO started on port ${PORT} (http://${HOST}:${PORT})`);
 });

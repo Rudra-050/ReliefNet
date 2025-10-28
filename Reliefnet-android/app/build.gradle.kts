@@ -27,8 +27,10 @@ android {
 
     buildTypes {
         debug {
-            // Debug points to local dev server via emulator loopback
-            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:5000/\"")
+            // Debug: use LAN IP if provided, else emulator loopback (10.0.2.2)
+            val devHostIp = project.findProperty("DEV_HOST_IP") as String? ?: ""
+            val debugBaseUrl = if (devHostIp.isNotBlank()) "http://$devHostIp:5000/" else "http://10.0.2.2:5000/"
+            buildConfigField("String", "BASE_URL", "\"$debugBaseUrl\"")
         }
         release {
             // Production API on Railway

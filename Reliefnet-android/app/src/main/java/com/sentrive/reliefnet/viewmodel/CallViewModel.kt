@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import io.socket.client.IO
 import io.socket.client.Socket
+import com.sentrive.reliefnet.network.ApiConfig
 import org.json.JSONObject
 import java.net.URISyntaxException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +27,8 @@ class CallViewModel(app: Application) : AndroidViewModel(app) {
 
     companion object {
         private const val TAG = "CallViewModel"
-        // Use Railway production URL - will work on all devices/emulator
-        private const val SERVER_URL = "https://reliefnet-production-e119.up.railway.app"
+        // Use API-configured socket URL per build type (debug/release)
+        private val SERVER_URL = ApiConfig.SOCKET_URL
     }
 
     private var socket: Socket? = null

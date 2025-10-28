@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.sentrive.reliefnet.repository.ChatRepository
 import io.socket.client.IO
 import io.socket.client.Socket
+import com.sentrive.reliefnet.network.ApiConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -53,8 +54,8 @@ class ChatViewModel(
     
     companion object {
         private const val TAG = "ChatViewModel"
-        // Use Railway production URL - will work on all devices/emulator
-        private const val SERVER_URL = "https://reliefnet-production-e119.up.railway.app"
+        // Use API-configured socket URL per build type (debug/release)
+        private val SERVER_URL = ApiConfig.SOCKET_URL
     }
 
     private var socket: Socket? = null
@@ -121,7 +122,7 @@ class ChatViewModel(
                 _uiState.value = ChatUiState.Error("Connection error")
             }
 
-            on("chat:message") { args ->
+            on("chat:new-message") { args ->
                 try {
                     val data = args[0] as JSONObject
                     val message = parseChatMessage(data)
@@ -138,7 +139,7 @@ class ChatViewModel(
                 }
             }
 
-            on("chat:typing") { args ->
+            on("chat:user-typing") { args ->
                 try {
                     val data = args[0] as JSONObject
                     val senderId = data.getString("senderId")
@@ -226,7 +227,7 @@ class ChatViewModel(
             put("content", content)
         }
 
-        socket?.emit("chat:send", messageData)
+    socket?.emit("chat:send-message", messageData)
         
         // Optimistically add message to UI
         val tempMessage = ChatMessage(
@@ -272,10 +273,10 @@ class ChatViewModel(
             put("conversationId", conversationId)
             put("userId", userId)
             put("userType", userType)
-            put("messageIds", org.json.JSONArray(messageIds))
         }
 
-        socket?.emit("chat:read", data)
+        // Server expects 'chat:mark-read' and will mark all unread messages for this user
+        socket?.emit("chat:mark-read", data)
     }
 
     fun loadMessagesForConversation(conversationId: String, token: String) {
