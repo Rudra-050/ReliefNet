@@ -257,6 +257,7 @@ data class ConfirmPaymentRequest(
     val time: String,
     val duration: Int = 60,
     val type: String = "consultation",
+    val symptoms: String? = null,
     val notes: String? = null
 )
 

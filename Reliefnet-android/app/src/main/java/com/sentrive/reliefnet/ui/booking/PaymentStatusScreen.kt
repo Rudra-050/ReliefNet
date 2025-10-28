@@ -26,6 +26,10 @@ fun PaymentStatusScreen(
     professionalId: String,
     appointmentDate: String,
     appointmentTime: String,
+    appointmentEndTime: String = "",
+    appointmentType: String = "Online Consultation",
+    symptoms: String = "",
+    notes: String = "",
     onSuccess: (String) -> Unit, // Navigate to booking details
     onFailed: () -> Unit,
     onBack: () -> Unit,
@@ -49,11 +53,23 @@ fun PaymentStatusScreen(
                 isVerifying = false
                 // Automatically confirm booking
                 delay(500)
+                
+                // Map appointmentType to sessionType
+                val sessionType = when (appointmentType) {
+                    "Home Visit" -> "home-visit"
+                    "Online Consultation" -> "consultation"
+                    "In-Person Visit" -> "consultation"
+                    else -> "consultation"
+                }
+                
                 viewModel.confirmPaymentAndBooking(
                     merchantTransactionId = merchantTransactionId,
                     professionalId = professionalId,
                     date = appointmentDate,
-                    time = appointmentTime
+                    time = appointmentTime,
+                    type = sessionType,
+                    symptoms = symptoms.ifBlank { null },
+                    notes = notes.ifBlank { null }
                 )
             }
             is BookingViewModel.PaymentState.PaymentFailed -> {

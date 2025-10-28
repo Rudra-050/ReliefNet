@@ -226,18 +226,26 @@ fun Navigation(navHostController: NavHostController){
         
         // Payment Status Screen (handles PhonePe deep link callback)
         composable(
-            route = "payment_status/{transactionId}/{doctorId}/{date}/{time}",
+            route = "payment_status/{transactionId}/{doctorId}/{date}/{time}/{endTime}/{appointmentType}/{symptoms}/{notes}",
             arguments = listOf(
                 navArgument("transactionId") { type = NavType.StringType },
                 navArgument("doctorId") { type = NavType.StringType },
                 navArgument("date") { type = NavType.StringType },
-                navArgument("time") { type = NavType.StringType }
+                navArgument("time") { type = NavType.StringType },
+                navArgument("endTime") { type = NavType.StringType },
+                navArgument("appointmentType") { type = NavType.StringType },
+                navArgument("symptoms") { type = NavType.StringType },
+                navArgument("notes") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val transactionId = backStackEntry.arguments?.getString("transactionId") ?: ""
             val doctorId = backStackEntry.arguments?.getString("doctorId") ?: ""
             val date = backStackEntry.arguments?.getString("date") ?: ""
             val time = backStackEntry.arguments?.getString("time") ?: ""
+            val endTime = backStackEntry.arguments?.getString("endTime") ?: ""
+            val appointmentType = backStackEntry.arguments?.getString("appointmentType") ?: "Online Consultation"
+            val symptoms = backStackEntry.arguments?.getString("symptoms") ?: ""
+            val notes = backStackEntry.arguments?.getString("notes") ?: ""
             
             val repository = ReliefNetRepository()
             val viewModelFactory = BookingViewModelFactory(repository)
@@ -248,6 +256,10 @@ fun Navigation(navHostController: NavHostController){
                 professionalId = doctorId,
                 appointmentDate = date,
                 appointmentTime = time,
+                appointmentEndTime = endTime,
+                appointmentType = appointmentType,
+                symptoms = symptoms,
+                notes = notes,
                 onSuccess = { bookingId ->
                     // Navigate to booking details or my bookings
                     navHostController.navigate("YourBookings") {

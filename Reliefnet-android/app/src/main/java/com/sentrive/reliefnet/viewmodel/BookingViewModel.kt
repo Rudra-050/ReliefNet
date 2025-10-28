@@ -233,6 +233,7 @@ class BookingViewModel(private val repository: ReliefNetRepository) : ViewModel(
         time: String,
         duration: Int = 60,
         type: String = "consultation",
+        symptoms: String? = null,
         notes: String? = null
     ) {
         viewModelScope.launch {
@@ -246,6 +247,7 @@ class BookingViewModel(private val repository: ReliefNetRepository) : ViewModel(
                     time = time,
                     duration = duration,
                     type = type,
+                    symptoms = symptoms,
                     notes = notes
                 )
                 

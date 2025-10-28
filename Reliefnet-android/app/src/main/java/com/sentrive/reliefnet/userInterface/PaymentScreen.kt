@@ -154,9 +154,9 @@ fun PaymentScreen(
                                 // Launch PhonePe payment
                                 context.openPhonePePayment(paymentUrl)
                                 
-                                // Navigate to payment status screen
+                                // Navigate to payment status screen with all booking details
                                 navHostController.navigate(
-                                    "payment-status/${paymentBody.merchantTransactionId}/$doctorId/$date/$startTime/${notes.ifBlank { "none" }}"
+                                    "payment-status/${paymentBody.merchantTransactionId}/$doctorId/$date/$startTime/$endTime/$appointmentType/$symptoms/$notes"
                                 ) {
                                     popUpTo("IntegratedBooking/$doctorId") { inclusive = true }
                                 }
