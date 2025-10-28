@@ -92,6 +92,9 @@ fun DiscoverScreen(navHostController: NavHostController) {
                 errorMessage = cleanError
                 isLoadingDoctors = false
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            // Coroutine was cancelled (screen navigated away) - this is normal, don't show error
+            throw e // Re-throw to properly cancel the coroutine
         } catch (e: Exception) {
             // Clean up exception messages
             val cleanError = e.message?.let { msg ->
