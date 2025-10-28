@@ -106,7 +106,7 @@ fun Navigation(navHostController: NavHostController){
         composable("PatientChatScreen") { PatientChatScreen() }
         
         // Test routes
-        composable("RelieChat") { RelieChat() }
+        composable("RelieChat") { RelieChat(navHostController) }
 
         // Video/Audio Call route
         composable(

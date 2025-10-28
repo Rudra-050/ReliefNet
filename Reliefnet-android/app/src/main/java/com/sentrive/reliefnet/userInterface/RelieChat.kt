@@ -32,12 +32,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
 import com.sentrive.reliefnet.ui.theme.interFontFamily
 import com.sentrive.reliefnet.viewmodel.ChatbotViewModel
 
 @Composable
-fun RelieChat(chatbotViewModel: ChatbotViewModel = viewModel()) {
+fun RelieChat(
+    navHostController: NavHostController? = null,
+    chatbotViewModel: ChatbotViewModel = viewModel()
+) {
     val messages by chatbotViewModel.messages.collectAsState()
     val isLoading by chatbotViewModel.isLoading.collectAsState()
     var messageText by remember { mutableStateOf("") }
@@ -60,7 +64,9 @@ fun RelieChat(chatbotViewModel: ChatbotViewModel = viewModel()) {
         )
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .imePadding() // This ensures content moves above keyboard
         ) {
             Spacer(Modifier.height(65.dp))
             // Top Bar
@@ -69,7 +75,11 @@ fun RelieChat(chatbotViewModel: ChatbotViewModel = viewModel()) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RelieRow("Relie", R.drawable.arrow_2)
+                RelieRow(
+                    text = "Relie",
+                    backarrow = R.drawable.arrow_2,
+                    onBackClick = { navHostController?.navigateUp() }
+                )
                 // Clear chat button
                 Text(
                     text = "Clear",
@@ -148,7 +158,7 @@ fun RelieChat(chatbotViewModel: ChatbotViewModel = viewModel()) {
 }
 
 @Composable
-fun RelieRow(text: String, backarrow: Int) {
+fun RelieRow(text: String, backarrow: Int, onBackClick: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -163,6 +173,7 @@ fun RelieRow(text: String, backarrow: Int) {
             Modifier
                 .padding(start = 16.dp)
                 .align(Alignment.CenterStart)
+                .clickable { onBackClick() } // Add click handler for navigation
         )
 
         // Centered title
