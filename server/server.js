@@ -1668,6 +1668,55 @@ app.put('/api/doctor/profile', authenticateToken, async (req, res) => {
   });
 });
 
+// GET /api/doctors - get list of doctors (public, for patient to browse)
+app.get('/api/doctors', async (req, res) => {
+  try {
+    const { specialty, limit = 50, skip = 0 } = req.query;
+    
+    // Build query filter
+    const filter = {};
+    if (specialty) {
+      filter.specialty = specialty;
+    }
+    
+    // Fetch doctors from database
+    const doctors = await Doctor.find(filter)
+      .select('name email specialty specialization bio location medicalId experience rating reviewCount price photo')
+      .limit(parseInt(limit))
+      .skip(parseInt(skip))
+      .sort({ rating: -1, reviewCount: -1 }); // Sort by rating first
+    
+    // Transform for frontend
+    const transformedDoctors = doctors.map(doctor => ({
+      id: doctor._id.toString(),
+      name: doctor.name || 'Dr. Unknown',
+      specialty: doctor.specialty || specialty || 'General',
+      specialization: doctor.specialization || doctor.specialty || 'General Practitioner',
+      bio: doctor.bio || 'Experienced mental health professional',
+      location: doctor.location || 'Location not specified',
+      experience: doctor.experience || '5+ years',
+      rating: doctor.rating || 4.5,
+      reviewCount: doctor.reviewCount || 0,
+      price: doctor.price || 500,
+      photo: doctor.photo || null,
+      medicalId: doctor.medicalId
+    }));
+    
+    res.json({ 
+      success: true,
+      doctors: transformedDoctors,
+      total: transformedDoctors.length
+    });
+  } catch (error) {
+    console.error('Error fetching doctors:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to fetch doctors',
+      error: error.message 
+    });
+  }
+});
+
 // Doctor utilities and endpoints for app pages
 // GET /api/doctor/chats - list of patient conversations for the logged in doctor
 app.get('/api/doctor/chats', authenticateToken, async (req, res) => {
