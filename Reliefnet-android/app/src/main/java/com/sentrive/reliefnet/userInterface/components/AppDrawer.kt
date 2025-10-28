@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -105,6 +106,17 @@ fun AppDrawer(
                 onClose()
             },
             icon = { Icon(Icons.Default.Person, contentDescription = null) },
+            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+        )
+
+        NavigationDrawerItem(
+            label = { Text("Notifications") },
+            selected = false,
+            onClick = {
+                navHostController.navigate("Notifications")
+                onClose()
+            },
+            icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
 

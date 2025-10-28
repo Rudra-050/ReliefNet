@@ -20,14 +20,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +49,8 @@ import com.sentrive.reliefnet.R
 import com.sentrive.reliefnet.ui.theme.alegreyaSansFontFamily
 import com.sentrive.reliefnet.ui.theme.inriaSerifFontFamily
 import com.sentrive.reliefnet.ui.theme.mitrFontFamily
+import com.sentrive.reliefnet.userInterface.components.AppDrawer
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(navHostController: NavHostController){
@@ -58,12 +64,24 @@ fun ProfileScreen(navHostController: NavHostController){
     val userProfileState = userProfileViewModel.userProfile.collectAsState()
     val user = userProfileState.value
     val context = androidx.compose.ui.platform.LocalContext.current
+    
+    // Drawer state
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     // Fetch profile on first composition
     androidx.compose.runtime.LaunchedEffect(Unit) {
         userProfileViewModel.fetchUserProfile(context)
     }
 
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppDrawer(navHostController = navHostController) {
+                scope.launch { drawerState.close() }
+            }
+        }
+    ) {
     Box(Modifier.fillMaxSize()
         .padding(top = 30.dp)){
             Image(painterResource(R.drawable.bg),
@@ -73,7 +91,9 @@ fun ProfileScreen(navHostController: NavHostController){
 
         Scaffold(
             topBar = {
-                TopBar(navHostController)
+                TopBar(navHostController, onMenuClick = {
+                    scope.launch { drawerState.open() }
+                })
             },
             containerColor = Color.Transparent,
             contentColor = Color.White,
@@ -147,6 +167,7 @@ fun ProfileScreen(navHostController: NavHostController){
                 }
             }
         }
+    }
     }
 }
 @Composable
