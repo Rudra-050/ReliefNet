@@ -145,7 +145,8 @@ object BookingRequestBuilder {
         sessionType: String = "consultation",
         amount: Double,
         reasonForVisit: String? = null,
-        symptoms: String? = null
+        symptoms: String? = null,
+        notes: String? = null
     ): Map<String, Any?> {
         return mapOf(
             "patientId" to patientId,
@@ -161,8 +162,21 @@ object BookingRequestBuilder {
             "sessionType" to sessionType,
             "amount" to amount,
             "reasonForVisit" to reasonForVisit,
-            "symptoms" to symptoms
+            "symptoms" to symptoms,
+            "notes" to notes
         )
+    }
+    
+    /**
+     * Helper function to map UI appointmentType to backend sessionType
+     */
+    fun mapAppointmentTypeToSessionType(appointmentType: String): String {
+        return when (appointmentType) {
+            "Online Consultation" -> "consultation"
+            "In-Person Visit" -> "consultation"
+            "Home Visit" -> "home-visit"
+            else -> "consultation"
+        }
     }
     
     fun setAvailability(
