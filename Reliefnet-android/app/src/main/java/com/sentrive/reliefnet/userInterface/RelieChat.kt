@@ -327,7 +327,10 @@ fun MessageRow(
                 unfocusedContainerColor = Color.White,
                 focusedContainerColor = Color.White,
                 focusedBorderColor = Color(0xFFB39DDB),
-                unfocusedBorderColor = Color.LightGray
+                unfocusedBorderColor = Color.LightGray,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                cursorColor = Color.Black
             ),
             trailingIcon = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
