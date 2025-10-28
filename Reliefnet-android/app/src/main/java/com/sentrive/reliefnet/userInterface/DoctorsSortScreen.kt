@@ -79,11 +79,35 @@ fun DiscoverScreen(navHostController: NavHostController) {
                 doctors = doctorList
                 isLoadingDoctors = false
             }.onFailure { error ->
-                errorMessage = error.message ?: "Failed to load doctors"
+                // Clean up HTML error messages
+                val cleanError = error.message?.let { msg ->
+                    when {
+                        msg.contains("Cannot GET", ignoreCase = true) -> 
+                            "Unable to connect to server. Please check if the backend is running."
+                        msg.contains("<!DOCTYPE", ignoreCase = true) || msg.contains("<html", ignoreCase = true) -> 
+                            "Server error. Please try again later."
+                        else -> msg
+                    }
+                } ?: "Failed to load doctors"
+                errorMessage = cleanError
                 isLoadingDoctors = false
             }
         } catch (e: Exception) {
-            errorMessage = e.message ?: "An error occurred"
+            // Clean up exception messages
+            val cleanError = e.message?.let { msg ->
+                when {
+                    msg.contains("Cannot GET", ignoreCase = true) -> 
+                        "Unable to connect to server. Please check if the backend is running."
+                    msg.contains("<!DOCTYPE", ignoreCase = true) || msg.contains("<html", ignoreCase = true) -> 
+                        "Server error. Please try again later."
+                    msg.contains("Unable to resolve host", ignoreCase = true) -> 
+                        "No internet connection. Please check your network."
+                    msg.contains("timeout", ignoreCase = true) -> 
+                        "Connection timeout. Please try again."
+                    else -> msg
+                }
+            } ?: "An error occurred"
+            errorMessage = cleanError
             isLoadingDoctors = false
         }
     }
@@ -403,20 +427,35 @@ fun DoctorCard(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer
+                        ),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text(
-                            text = errorMessage,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            text = "Please check your connection and try again",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
+                        Column(
+                            modifier = Modifier.padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                text = "⚠️",
+                                fontSize = 48.sp
+                            )
+                            Text(
+                                text = "Unable to Load Doctors",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                            Text(
+                                text = errorMessage,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
