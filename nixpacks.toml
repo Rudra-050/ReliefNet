@@ -1,0 +1,10 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "npm-10_x"]
+
+[phases.install]
+cmds = ["cd server && npm ci --production"]
+
+[phases.build]
+
+[start]
+cmd = "cd server && node server.js"
