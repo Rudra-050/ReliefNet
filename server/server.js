@@ -348,7 +348,7 @@ const io = socketio(server, {
 // Health endpoint (after app initialization)
 app.get('/health', (req, res) => {
   const state = ['disconnected','connected','connecting','disconnecting'][mongoose.connection.readyState] || 'unknown';
-  res.json({ status: 'ok', db: state, time: new Date().toISOString() });
+  res.json({ status: 'ok', db: state, time: new Date().toISOString(), version: '1.1.0' });
 });
 
 // Get login sessions for a user (authenticated)
