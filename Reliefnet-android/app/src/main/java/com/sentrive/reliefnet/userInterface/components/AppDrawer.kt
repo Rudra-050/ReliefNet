@@ -150,7 +150,7 @@ fun AppDrawer(
             selected = false,
             onClick = {
                 TokenManager.clearUserData(context)
-                navHostController.navigate("LoginScreen") {
+                navHostController.navigate("UserTypeSelection") {
                     popUpTo(0) { inclusive = true }
                     launchSingleTop = true
                 }
