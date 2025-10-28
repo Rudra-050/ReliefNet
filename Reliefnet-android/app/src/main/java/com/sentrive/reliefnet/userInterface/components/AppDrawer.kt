@@ -149,12 +149,15 @@ fun AppDrawer(
             label = { Text("Logout") },
             selected = false,
             onClick = {
+                // Clear user data first
                 TokenManager.clearUserData(context)
+                // Close drawer
+                onClose()
+                // Navigate to UserTypeSelection and clear entire back stack
                 navHostController.navigate("UserTypeSelection") {
                     popUpTo(0) { inclusive = true }
                     launchSingleTop = true
                 }
-                onClose()
             },
             icon = { Icon(Icons.Default.ExitToApp, contentDescription = null) },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
