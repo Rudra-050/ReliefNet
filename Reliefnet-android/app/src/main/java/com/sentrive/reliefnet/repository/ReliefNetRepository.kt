@@ -215,6 +215,36 @@ class ReliefNetRepository {
             }
         }
     }
+
+    // Doctor: create availability session
+    suspend fun createDoctorSession(
+        date: String,
+        time: String,
+        duration: Int = 60,
+        type: String = "consultation",
+        token: String
+    ): Result<com.sentrive.reliefnet.network.models.Session> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val request = com.sentrive.reliefnet.network.models.CreateDoctorSessionRequest(
+                    date = date,
+                    time = time,
+                    duration = duration,
+                    type = type
+                )
+                val response = apiService.createDoctorSession(request, "Bearer $token")
+
+                if (response.isSuccessful && response.body() != null && response.body()!!.data != null) {
+                    Result.success(response.body()!!.data!!)
+                } else {
+                    Result.failure(Exception(response.errorBody()?.string() ?: "Failed to create doctor session"))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error creating doctor session", e)
+                Result.failure(e)
+            }
+        }
+    }
     
     suspend fun getSessions(
         patientId: String? = null,

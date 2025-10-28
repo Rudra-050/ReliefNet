@@ -8,6 +8,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.compose.ui.platform.LocalContext
+import com.sentrive.reliefnet.repository.ReliefNetRepository
+import com.sentrive.reliefnet.utils.TokenManager
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -19,6 +23,9 @@ fun DoctorSessionCreationScreen(navHostController: NavHostController) {
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var success by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val repository = remember { ReliefNetRepository() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -51,13 +58,34 @@ fun DoctorSessionCreationScreen(navHostController: NavHostController) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {
-                        // TODO: Connect to backend POST /api/doctor/sessions
+                        // Call backend to create doctor session
+                        errorMessage = null
+                        success = false
+                        val token = TokenManager.getToken(context)
+                        if (token.isNullOrBlank()) {
+                            errorMessage = "You must be logged in as a doctor to create sessions"
+                            return@Button
+                        }
                         isLoading = true
-                        // Simulate success
-                        success = true
-                        isLoading = false
+                        scope.launch {
+                            val result = repository.createDoctorSession(
+                                date = date,
+                                time = time,
+                                duration = duration,
+                                type = "consultation",
+                                token = token
+                            )
+                            isLoading = false
+                            result.onSuccess {
+                                success = true
+                                // Optionally navigate back to sessions list
+                                navHostController?.popBackStack()
+                            }.onFailure { err ->
+                                errorMessage = err.message ?: "Failed to create session"
+                            }
+                        }
                     },
-                    enabled = date.isNotBlank() && time.isNotBlank() && duration > 0
+                    enabled = date.isNotBlank() && time.isNotBlank() && duration > 0 && !isLoading
                 ) {
                     Text("Create Session")
                 }

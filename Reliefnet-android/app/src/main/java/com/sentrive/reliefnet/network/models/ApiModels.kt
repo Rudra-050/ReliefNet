@@ -115,6 +115,14 @@ data class CreateSessionRequest(
     val notes: String? = null
 )
 
+// Request used by doctors to create availability sessions
+data class CreateDoctorSessionRequest(
+    val date: String,
+    val time: String,
+    val duration: Int = 60,
+    val type: String = "consultation"
+)
+
 // Notification Models
 data class Notification(
     @SerializedName("_id")

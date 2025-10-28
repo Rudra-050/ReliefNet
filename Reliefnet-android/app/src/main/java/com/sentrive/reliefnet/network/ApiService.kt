@@ -47,6 +47,13 @@ interface ApiService {
         @Body doctor: Doctor,
         @Header("Authorization") token: String
     ): Response<ApiResponse<Doctor>>
+
+    // Doctor session management (doctor creates availability)
+    @POST("api/doctor/sessions")
+    suspend fun createDoctorSession(
+        @Body request: com.sentrive.reliefnet.network.models.CreateDoctorSessionRequest,
+        @Header("Authorization") token: String
+    ): Response<ApiResponse<com.sentrive.reliefnet.network.models.Session>>
     
     // Patient Endpoints
     @GET("api/patients/{id}")
