@@ -156,8 +156,8 @@ fun MainBottomBar(navHostController: NavHostController) {
         ) {
             BottomBarItem(icon = R.drawable.home_fill, label = "Home", onClick = { navHostController.navigate("Home"){ launchSingleTop = true } })
             BottomBarItem(icon = R.drawable.discover, label = "Nav", onClick = { navHostController.navigate("DiscoverScreen"){ launchSingleTop = true } })
-            BottomBarItem(icon = R.drawable.vector, label = "Cart", onClick = { navHostController.navigate("DoctorRegistrationScreen"){ launchSingleTop = true }})
-            BottomBarItem(icon = R.drawable.bell, label = "Notification", onClick = { navHostController.navigate("AdvanceBooking"){ launchSingleTop = true } })
+            BottomBarItem(icon = R.drawable.vector, label = "Cart", onClick = { navHostController.navigate("YourBookings"){ launchSingleTop = true }})
+            BottomBarItem(icon = R.drawable.bell, label = "Notification", onClick = { navHostController.navigate("Notifications"){ launchSingleTop = true } })
             BottomBarItem(icon = R.drawable.person, label = "Account", onClick = { navHostController.navigate("ProfileScreen"){ launchSingleTop = true } })
         }
     }
