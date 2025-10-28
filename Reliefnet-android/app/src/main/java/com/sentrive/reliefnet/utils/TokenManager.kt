@@ -121,5 +121,11 @@ object TokenManager {
      */
     fun clearUserData(context: Context) {
         getPreferences(context).edit().clear().apply()
+        // Also sign out from Firebase
+        try {
+            com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+        } catch (e: Exception) {
+            // Firebase not initialized, that's fine
+        }
     }
 }
