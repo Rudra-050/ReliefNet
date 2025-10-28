@@ -735,7 +735,7 @@ fun LoginScreen(navHostController: NavHostController){
                                     modifier = Modifier.height(30.dp)
                         )
                         Spacer(Modifier.width(8.dp))
-                        Text("Continue with Apple",fontFamily = interFontFamily,)
+                        Text("Continue with Google",fontFamily = interFontFamily,)
                     }
                 }
                 Spacer(Modifier.height(8.dp))
