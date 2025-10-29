@@ -510,7 +510,7 @@ fun DoctorCardItem(doctor: ApiDoctor, navHostController: NavHostController) {
             .padding(bottom = 16.dp)
             .clickable {
                 doctor.id?.let { doctorId ->
-                    navHostController.navigate("Booking/$doctorId")
+                    navHostController.navigate("booking/$doctorId")
                 }
             }
     ) {
@@ -599,7 +599,7 @@ fun DoctorCardItem(doctor: ApiDoctor, navHostController: NavHostController) {
             Button(
                 onClick = {
                     doctor.id?.let { doctorId ->
-                        navHostController.navigate("Booking/$doctorId")
+                        navHostController.navigate("booking/$doctorId")
                     }
                 },
                 modifier = Modifier

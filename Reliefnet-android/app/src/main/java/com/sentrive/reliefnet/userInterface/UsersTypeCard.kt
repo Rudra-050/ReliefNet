@@ -89,7 +89,7 @@ fun MentalHealthSupport(navHostController: NavHostController) {
             LazyColumn {
                 userTypes.forEach { userType ->
                     item {
-                        UserCard(userType,cardWidth.dp)
+                        UserCard(userType, cardWidth.dp, navHostController)
                     }
                 }
             }
@@ -98,7 +98,7 @@ fun MentalHealthSupport(navHostController: NavHostController) {
 }
 
 @Composable
-fun UserCard(userType: UserType, cardWidth : Dp){
+fun UserCard(userType: UserType, cardWidth: Dp, navHostController: NavHostController){
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,7 +108,11 @@ fun UserCard(userType: UserType, cardWidth : Dp){
         Card(
             modifier = Modifier
                 .width(cardWidth)
-                .height(139.dp),
+                .height(139.dp)
+                .clickable { 
+                    // Navigate to doctor list when user type is clicked
+                    navHostController.navigate("DiscoverScreen")
+                },
             colors = CardDefaults.cardColors(containerColor = userType.backgroundColor),
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
         ) {

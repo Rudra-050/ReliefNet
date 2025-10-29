@@ -55,7 +55,7 @@ fun ServicesScreen(navHostController: NavHostController) {
             description = "Book individual or group therapy sessions",
             backgroundColor = Color(0xFF80CBC4),
             imageRes = R.drawable.couple1,
-            route = "BookingMain"
+            route = "DiscoverScreen"
         ),
         Service(
             name = "Wellness Resources",
