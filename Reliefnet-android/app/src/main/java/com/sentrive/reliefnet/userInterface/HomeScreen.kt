@@ -158,30 +158,18 @@ fun HomePage(navHostController: NavHostController){
                    //RelieCard
                    RelieCard(navHostController,relieCardWidth.dp)
 
-
-                   Row {
-                       Spacer(Modifier.width(35.dp))
-                       // Dynamic avatar next to welcome text (uses Google photoUrl, with loading/error handling)
-                       val userProfileViewModel = androidx.lifecycle.viewmodel.compose.viewModel<com.sentrive.reliefnet.viewmodel.UserProfileViewModel>()
-                       val userProfileState = userProfileViewModel.userProfile.collectAsState()
-                       val user = userProfileState.value
-                       com.sentrive.reliefnet.userInterface.ProfilePhoto(
-                           photoUrl = user?.photoUrl,
-                           size = 40.dp
-                       )
-                       Spacer(Modifier.width(12.dp))
-                       Text(
-                           "Our Services",
-                           style = MaterialTheme.typography.titleMedium.copy(
-                               fontFamily = alegreyaFontFamily,
-                               fontSize = 20.sp,
-                               fontWeight = FontWeight.W500
-                           ),
-                          modifier =  Modifier
-                              .padding(top = 15.dp)
-                              .weight(1f)
-                       )
-                   }
+                   // Our Services section title
+                   Text(
+                       "Our Services",
+                       style = MaterialTheme.typography.titleMedium.copy(
+                           fontFamily = alegreyaFontFamily,
+                           fontSize = 20.sp,
+                           fontWeight = FontWeight.W500
+                       ),
+                       modifier = Modifier
+                           .fillMaxWidth()
+                           .padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
+                   )
 
                    //Mental Health Support Card
                    MentalHeatthSupportCard(navHostController,0xFFB39DDB,mentalHealthSupportCardWidth.dp)
