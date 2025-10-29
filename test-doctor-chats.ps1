@@ -2,13 +2,25 @@
 # This script tests the /api/doctor/chats endpoint
 
 Write-Host "`n=== Doctor Chats Endpoint Test ===" -ForegroundColor Cyan
+Write-Host "`nNote: You need valid doctor credentials to test this endpoint." -ForegroundColor Yellow
+Write-Host "If you don't have credentials, please:" -ForegroundColor Yellow
+Write-Host "  1. Register a new doctor account in the app, OR" -ForegroundColor Yellow
+Write-Host "  2. Use the Railway MongoDB database to find/create a doctor" -ForegroundColor Yellow
+
+# Prompt for credentials
+Write-Host "`nEnter doctor credentials:" -ForegroundColor Cyan
+$medicalId = Read-Host "Medical ID (e.g., MED10001, RN-191950)"
+$password = Read-Host "Password" -AsSecureString
+$passwordPlain = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
+    [Runtime.InteropServices.Marshal]::SecureStringToBSTR($password)
+)
 
 # First, login as a doctor to get a token
 Write-Host "`n1. Testing doctor login to get authentication token..." -ForegroundColor Yellow
 
 $loginBody = @{
-    medicalId = "DOC12345"  # Replace with actual doctor medical ID
-    password = "doctor123"   # Replace with actual doctor password
+    medicalId = $medicalId
+    password = $passwordPlain
 } | ConvertTo-Json
 
 try {
