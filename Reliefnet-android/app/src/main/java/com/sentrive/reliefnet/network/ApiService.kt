@@ -73,7 +73,7 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Response<ApiResponse<Session>>
     
-    @GET("api/sessions")
+    @GET("api/doctor/sessions")
     suspend fun getSessions(
         @Query("patientId") patientId: String? = null,
         @Query("doctorId") doctorId: String? = null,
