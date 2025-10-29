@@ -1204,13 +1204,24 @@ const JWT_SECRET = 'your_jwt_secret_key'; // Change this in production!
 // Middleware to authenticate JWT and attach user info to req.user
 function authenticateToken(req, res, next) {
   const auth = req.headers.authorization;
-  if (!auth) return res.status(401).json({ message: 'No token' });
+  if (!auth) {
+    console.log('❌ Auth failed: No authorization header');
+    return res.status(401).json({ message: 'No token' });
+  }
+  
   const token = auth.split(' ')[1];
+  if (!token) {
+    console.log('❌ Auth failed: Token not found in authorization header');
+    return res.status(401).json({ message: 'Invalid token format' });
+  }
+  
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
+    console.log('✅ Auth success:', decoded.email, 'role:', decoded.role);
     next();
   } catch (err) {
+    console.log('❌ Auth failed: JWT verification error:', err.message);
     return res.status(401).json({ message: 'Invalid token' });
   }
 }
@@ -2901,17 +2912,34 @@ app.get('/api/professionals/:id/chats', authenticateToken, async (req, res) => {
 // POST /api/doctor/sessions - Doctor creates a session
 app.post('/api/doctor/sessions', authenticateToken, async (req, res) => {
   try {
-    if (req.user.role !== 'doctor') return res.status(403).json({ message: 'Forbidden' });
+    console.log('📝 Creating doctor session - User:', req.user);
+    console.log('📝 Request body:', req.body);
+    
+    if (req.user.role !== 'doctor') {
+      console.log('❌ Forbidden: user role is', req.user.role);
+      return res.status(403).json({ success: false, message: 'Forbidden: Only doctors can create sessions' });
+    }
+    
     const doctor = await Doctor.findOne({ email: req.user.email });
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
+    if (!doctor) {
+      console.log('❌ Doctor not found for email:', req.user.email);
+      return res.status(404).json({ success: false, message: 'Doctor not found' });
+    }
+    
     const { date, time, duration, type } = req.body;
-    if (!date || !time || !duration || !type) return res.status(400).json({ message: 'Missing fields' });
+    if (!date || !time || !duration || !type) {
+      console.log('❌ Missing fields:', { date, time, duration, type });
+      return res.status(400).json({ success: false, message: 'Missing required fields: date, time, duration, type' });
+    }
+    
     const session = new Session({ doctor: doctor._id, date, time, duration, type });
     await session.save();
-    res.json({ message: 'Session created', session });
+    
+    console.log('✅ Session created successfully:', session._id);
+    res.json({ success: true, message: 'Session created successfully', data: session });
   } catch (err) {
-    console.error('Error creating session:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Error creating session:', err);
+    res.status(500).json({ success: false, message: 'Internal server error: ' + err.message });
   }
 });
 
