@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.network.RetrofitClient
 import com.sentrive.reliefnet.network.models.DoctorProfile
 import com.sentrive.reliefnet.utils.TokenManager
+import com.sentrive.reliefnet.userInterface.components.DoctorBottomNavigationBar
 import kotlinx.coroutines.launch
 
 @Composable
@@ -37,7 +38,17 @@ fun DoctorAccountProfileScreen(nav: NavHostController? = null) {
         }
     }
 
-    Scaffold(topBar = { CenterAlignedTopAppBar(title = { Text("Profile") }) }) { p ->
+    Scaffold(
+        topBar = { CenterAlignedTopAppBar(title = { Text("Profile") }) },
+        bottomBar = {
+            nav?.let { controller ->
+                DoctorBottomNavigationBar(
+                    navController = controller,
+                    currentRoute = "DoctorAccountProfile"
+                )
+            }
+        }
+    ) { p ->
         Column(Modifier.padding(p).padding(16.dp)) {
             if (profile == null && error == null) CircularProgressIndicator()
             error?.let { Text("Error: $it") }
@@ -147,7 +158,17 @@ fun DoctorSessionsScreen(nav: NavHostController? = null) {
         }
     }
 
-    Scaffold(topBar = { CenterAlignedTopAppBar(title = { Text("Bookings") }) }) { p ->
+    Scaffold(
+        topBar = { CenterAlignedTopAppBar(title = { Text("Bookings") }) },
+        bottomBar = {
+            nav?.let { controller ->
+                DoctorBottomNavigationBar(
+                    navController = controller,
+                    currentRoute = "DoctorSessions"
+                )
+            }
+        }
+    ) { p ->
         Column(Modifier.padding(p).padding(16.dp)) {
             if (loading) CircularProgressIndicator()
             else if (error != null) Text("Error: $error")

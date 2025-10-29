@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
 import com.sentrive.reliefnet.utils.TokenManager
 import com.sentrive.reliefnet.userInterface.components.AppDrawer
+import com.sentrive.reliefnet.userInterface.components.DoctorBottomNavigationBar
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,35 +61,10 @@ fun DoctorDashboardScreen(navHostController: NavHostController) {
             )
         },
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = true,
-                    onClick = { /* Already on dashboard */ },
-                    icon = { Icon(Icons.Default.Home, "Home") },
-                    label = { Text("Home") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navHostController.navigate("DoctorChats") },
-                    icon = { Icon(Icons.Default.Chat, "Chats") },
-                    label = { Text("Chats") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navHostController.navigate("DoctorSessions") },
-                    icon = { Icon(Icons.Default.CalendarToday, "Sessions") },
-                    label = { Text("Sessions") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {
-                        // Navigate only to DoctorAccountProfile when profile icon is clicked
-                        navHostController.navigate("DoctorAccountProfile")
-                    },
-                    icon = { Icon(Icons.Default.Person, "Profile") },
-                    label = { Text("Profile") }
-                )
-            }
+            DoctorBottomNavigationBar(
+                navController = navHostController,
+                currentRoute = "DoctorDashboard"
+            )
         }
     ) { paddingValues ->
         Box(

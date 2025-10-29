@@ -18,6 +18,7 @@ import com.sentrive.reliefnet.network.RetrofitClient
 import com.sentrive.reliefnet.network.models.DoctorChatSummary
 import com.sentrive.reliefnet.utils.TokenManager
 import com.sentrive.reliefnet.userInterface.components.AppDrawer
+import com.sentrive.reliefnet.userInterface.components.DoctorBottomNavigationBar
 import kotlinx.coroutines.launch
 
 @Composable
@@ -75,19 +76,29 @@ fun DoctorChatsListScreen(nav: NavHostController? = null) {
             }
         }
     ) {
-    Scaffold(topBar = { 
-        CenterAlignedTopAppBar(
-            title = { Text("Chats") },
-            navigationIcon = {
-                IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                    Icon(
-                        painter = painterResource(R.drawable.menu),
-                        contentDescription = "Menu"
-                    )
+    Scaffold(
+        topBar = { 
+            CenterAlignedTopAppBar(
+                title = { Text("Chats") },
+                navigationIcon = {
+                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                        Icon(
+                            painter = painterResource(R.drawable.menu),
+                            contentDescription = "Menu"
+                        )
+                    }
                 }
+            ) 
+        },
+        bottomBar = {
+            nav?.let { controller ->
+                DoctorBottomNavigationBar(
+                    navController = controller,
+                    currentRoute = "DoctorChats"
+                )
             }
-        ) 
-    }) { p ->
+        }
+    ) { p ->
         Column(
             Modifier
                 .padding(p)
