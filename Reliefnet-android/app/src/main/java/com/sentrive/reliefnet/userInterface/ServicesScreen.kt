@@ -48,7 +48,7 @@ fun ServicesScreen(navHostController: NavHostController) {
             description = "24/7 crisis helpline and emergency support",
             backgroundColor = Color(0xFFEF9A9A),
             imageRes = R.drawable.child1,
-            route = "Home" // Placeholder - can be implemented later
+            route = "EmergencyContactScreen"
         ),
         Service(
             name = "Therapy Sessions",
@@ -62,14 +62,14 @@ fun ServicesScreen(navHostController: NavHostController) {
             description = "Articles, videos, and self-help guides",
             backgroundColor = Color(0xFFFFF59D),
             imageRes = R.drawable.teen1,
-            route = "Home" // Placeholder - can be implemented later
+            route = "WellnessResourcesScreen"
         ),
         Service(
             name = "Support Groups",
             description = "Join community support groups and forums",
             backgroundColor = Color(0xFFCE93D8),
             imageRes = R.drawable.individual1,
-            route = "Home" // Placeholder - can be implemented later
+            route = "SupportGroupsScreen"
         ),
         Service(
             name = "Chat with Doctors",
