@@ -62,7 +62,8 @@ fun DoctorSessionCreationScreen(navHostController: NavHostController) {
                         errorMessage = null
                         success = false
                         val token = TokenManager.getToken(context)
-                        if (token.isNullOrBlank()) {
+                        val userType = TokenManager.getUserType(context)
+                        if (token.isNullOrBlank() || userType == null || !userType.equals("doctor", ignoreCase = true)) {
                             errorMessage = "You must be logged in as a doctor to create sessions"
                             return@Button
                         }
@@ -81,6 +82,7 @@ fun DoctorSessionCreationScreen(navHostController: NavHostController) {
                                 // Optionally navigate back to sessions list
                                 navHostController?.popBackStack()
                             }.onFailure { err ->
+                                // Show detailed server message when available
                                 errorMessage = err.message ?: "Failed to create session"
                             }
                         }

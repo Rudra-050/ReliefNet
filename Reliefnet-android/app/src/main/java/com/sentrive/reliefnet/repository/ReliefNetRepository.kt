@@ -237,7 +237,14 @@ class ReliefNetRepository {
                 if (response.isSuccessful && response.body() != null && response.body()!!.data != null) {
                     Result.success(response.body()!!.data!!)
                 } else {
-                    Result.failure(Exception(response.errorBody()?.string() ?: "Failed to create doctor session"))
+                    // Try to extract useful error info from body or errorBody
+                    val serverMsg = try {
+                        response.body()?.message ?: response.errorBody()?.string()
+                    } catch (e: Exception) {
+                        null
+                    }
+                    val message = serverMsg ?: "Failed to create doctor session"
+                    Result.failure(Exception(message))
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error creating doctor session", e)
