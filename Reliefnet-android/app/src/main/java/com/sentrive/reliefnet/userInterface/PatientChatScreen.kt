@@ -439,7 +439,9 @@ fun PatientChatBottomBar(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFF667EEA),
                 unfocusedBorderColor = Color.LightGray,
-                cursorColor = Color(0xFF667EEA)
+                cursorColor = Color(0xFF667EEA),
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
             ),
             enabled = isConnected,
             trailingIcon = {

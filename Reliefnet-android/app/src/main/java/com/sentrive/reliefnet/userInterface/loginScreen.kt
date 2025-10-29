@@ -480,6 +480,8 @@ fun LoginScreen(navHostController: NavHostController){
                             focusedBorderColor = Color.Cyan,
                             unfocusedBorderColor = Color.White,
                             unfocusedContainerColor = Color.White,
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
                         ),
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.width(300.dp),
@@ -501,6 +503,8 @@ fun LoginScreen(navHostController: NavHostController){
                             focusedBorderColor = Color.Cyan,
                             unfocusedBorderColor = Color.White,
                             unfocusedContainerColor = Color.White,
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
                        ),shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
                             .width(300.dp),
@@ -528,6 +532,8 @@ fun LoginScreen(navHostController: NavHostController){
                             focusedBorderColor = Color.Cyan,
                             unfocusedBorderColor = Color.White,
                             unfocusedContainerColor = Color.White,
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
                         ),
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.width(300.dp),
@@ -555,6 +561,8 @@ fun LoginScreen(navHostController: NavHostController){
                         focusedBorderColor = Color.Cyan,
                         unfocusedBorderColor = Color.White,
                         unfocusedContainerColor = Color.White,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
                     ),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.width(300.dp),
@@ -582,6 +590,8 @@ fun LoginScreen(navHostController: NavHostController){
                             focusedBorderColor = Color.Cyan,
                             unfocusedBorderColor = Color.White,
                             unfocusedContainerColor = Color.White,
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
                         ),
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.width(300.dp),

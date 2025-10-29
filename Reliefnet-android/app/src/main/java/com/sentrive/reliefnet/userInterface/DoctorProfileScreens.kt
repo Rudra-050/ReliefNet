@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.platform.LocalContext
@@ -93,11 +94,11 @@ fun EditDoctorProfileScreen(nav: NavHostController? = null) {
 
     Scaffold(topBar = { CenterAlignedTopAppBar(title = { Text("Edit Profile") }) }) { p ->
         Column(Modifier.padding(p).padding(16.dp)) {
-            OutlinedTextField(name, { name = it }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(name, { name = it }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black))
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(specialization, { specialization = it }, label = { Text("Specialization") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(specialization, { specialization = it }, label = { Text("Specialization") }, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black))
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(bio, { bio = it }, label = { Text("About") }, modifier = Modifier.fillMaxWidth(), minLines = 3)
+            OutlinedTextField(bio, { bio = it }, label = { Text("About") }, modifier = Modifier.fillMaxWidth(), minLines = 3, colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black))
             Spacer(Modifier.height(16.dp))
             Button(enabled = !loading, onClick = {
                 loading = true
