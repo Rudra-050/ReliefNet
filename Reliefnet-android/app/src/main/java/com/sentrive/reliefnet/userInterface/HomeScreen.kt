@@ -158,18 +158,32 @@ fun HomePage(navHostController: NavHostController){
                    //RelieCard
                    RelieCard(navHostController,relieCardWidth.dp)
 
-                   // Our Services section title
-                   Text(
-                       "Our Services",
-                       style = MaterialTheme.typography.titleMedium.copy(
-                           fontFamily = alegreyaFontFamily,
-                           fontSize = 20.sp,
-                           fontWeight = FontWeight.W500
-                       ),
+                   // Our Services section title (clickable - navigates to Services page)
+                   Row(
                        modifier = Modifier
                            .fillMaxWidth()
-                           .padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
-                   )
+                           .padding(start = 16.dp, top = 16.dp, bottom = 8.dp, end = 16.dp)
+                           .clickable { navHostController.navigate("ServicesScreen") },
+                       horizontalArrangement = Arrangement.SpaceBetween,
+                       verticalAlignment = Alignment.CenterVertically
+                   ) {
+                       Text(
+                           "Our Services",
+                           style = MaterialTheme.typography.titleMedium.copy(
+                               fontFamily = alegreyaFontFamily,
+                               fontSize = 20.sp,
+                               fontWeight = FontWeight.W500
+                           )
+                       )
+                       Text(
+                           "View All →",
+                           style = MaterialTheme.typography.bodyMedium.copy(
+                               fontFamily = alegreyaFontFamily,
+                               fontSize = 14.sp,
+                               color = Color(0xFF6750A4)
+                           )
+                       )
+                   }
 
                    //Mental Health Support Card
                    MentalHeatthSupportCard(navHostController,0xFFB39DDB,mentalHealthSupportCardWidth.dp)

@@ -103,6 +103,7 @@ fun Navigation(navHostController: NavHostController){
         
         composable("SplashScreen") { SplashScreen(navHostController) }
         composable("MentalHealthSupport") { MentalHealthSupport(navHostController) }
+        composable("ServicesScreen") { ServicesScreen(navHostController) }
         composable("BookingScreenRecord") { BookingScreenRecord(navHostController) }
         composable("RelieScreen") { RelieScreen(navHostController) }
         composable("AdvanceBooking") { BookingScreenRecord(navHostController) }
