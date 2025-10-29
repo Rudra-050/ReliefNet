@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -33,14 +34,33 @@ fun DoctorChatsListScreen(nav: NavHostController? = null) {
             try {
                 val token = TokenManager.getToken(context)
                 if (token.isNullOrBlank()) {
-                    error = "Not authenticated"
-                } else {
-                    val resp = RetrofitClient.apiService.getDoctorChats("Bearer $token")
-                    if (resp.isSuccessful) {
-                        items = resp.body()?.conversations ?: emptyList()
-                    } else error = resp.message()
+                    error = "Not authenticated. Please login again."
+                    loading = false
+                    return@launch
                 }
-            } catch (e: Exception) { error = e.message }
+                
+                println("DoctorChatsListScreen: Fetching chats with token: ${token.take(20)}...")
+                val resp = RetrofitClient.apiService.getDoctorChats("Bearer $token")
+                
+                if (resp.isSuccessful) {
+                    val body = resp.body()
+                    println("DoctorChatsListScreen: Success! Conversations count: ${body?.conversations?.size}")
+                    items = body?.conversations ?: emptyList()
+                    if (items.isEmpty()) {
+                        error = "No patient conversations yet. Chats will appear here when patients message you."
+                    }
+                } else {
+                    val errorBody = resp.errorBody()?.string()
+                    val errorMsg = "Failed to load chats (${resp.code()}): ${resp.message()}\n${errorBody ?: ""}"
+                    println("DoctorChatsListScreen: Error - $errorMsg")
+                    error = errorMsg
+                }
+            } catch (e: Exception) { 
+                val errorMsg = "Network error: ${e.message ?: e.javaClass.simpleName}"
+                println("DoctorChatsListScreen: Exception - $errorMsg")
+                e.printStackTrace()
+                error = errorMsg
+            }
             loading = false
         }
     }
@@ -68,21 +88,95 @@ fun DoctorChatsListScreen(nav: NavHostController? = null) {
             }
         ) 
     }) { p ->
-        Column(Modifier.padding(p).padding(16.dp)) {
-            if (loading) CircularProgressIndicator()
-            else if (error != null) Text("Error: $error")
-            else {
-                Text("Patient Chats", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(8.dp))
-                items.forEach { c ->
-                    ListItem(
-                        headlineContent = { Text(c.patientName ?: "Patient") },
-                        supportingContent = { Text(c.lastMessage ?: "") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { nav?.navigate("DoctorChatScreen") }
-                    )
-                    HorizontalDivider()
+        Column(
+            Modifier
+                .padding(p)
+                .padding(16.dp)
+                .fillMaxSize()
+        ) {
+            when {
+                loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = androidx.compose.ui.Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                error != null -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "⚠️ Error",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            error ?: "Unknown error",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = {
+                            loading = true
+                            error = null
+                            scope.launch {
+                                try {
+                                    val token = TokenManager.getToken(context)
+                                    if (token.isNullOrBlank()) {
+                                        error = "Not authenticated. Please login again."
+                                        loading = false
+                                        return@launch
+                                    }
+                                    val resp = RetrofitClient.apiService.getDoctorChats("Bearer $token")
+                                    if (resp.isSuccessful) {
+                                        items = resp.body()?.conversations ?: emptyList()
+                                        if (items.isEmpty()) {
+                                            error = "No patient conversations yet."
+                                        }
+                                    } else {
+                                        error = "Failed (${resp.code()}): ${resp.message()}\n${resp.errorBody()?.string() ?: ""}"
+                                    }
+                                } catch (e: Exception) {
+                                    error = "Network error: ${e.message ?: e.javaClass.simpleName}"
+                                }
+                                loading = false
+                            }
+                        }) {
+                            Text("Retry")
+                        }
+                    }
+                }
+                else -> {
+                    Text("Patient Chats", style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(8.dp))
+                    if (items.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = androidx.compose.ui.Alignment.Center
+                        ) {
+                            Text(
+                                "No conversations yet\nPatient chats will appear here",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        items.forEach { c ->
+                            ListItem(
+                                headlineContent = { Text(c.patientName ?: "Patient") },
+                                supportingContent = { Text(c.lastMessage ?: "No messages") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { nav?.navigate("DoctorChatScreen") }
+                            )
+                            HorizontalDivider()
+                        }
+                    }
                 }
             }
         }
