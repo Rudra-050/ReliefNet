@@ -233,6 +233,12 @@ fun YourBookingsIntegratedScreen(navHostController: NavHostController) {
                                         if (!selfId.isNullOrBlank()) {
                                             navHostController.navigate("VideoCallScreen/${'$'}selfId/${'$'}{booking.doctorId}/true/video")
                                         }
+                                    },
+                                    onAudioCallClick = {
+                                        val selfId = TokenManager.getUserId(context)
+                                        if (!selfId.isNullOrBlank()) {
+                                            navHostController.navigate("VideoCallScreen/${'$'}selfId/${'$'}{booking.doctorId}/true/audio")
+                                        }
                                     }
                                 )
                             }
@@ -250,7 +256,8 @@ fun BookingCard(
     booking: Booking,
     onCancelClick: () -> Unit,
     onRescheduleClick: () -> Unit = {},
-    onJoinCallClick: () -> Unit = {}
+    onJoinCallClick: () -> Unit = {},
+    onAudioCallClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -339,6 +346,15 @@ fun BookingCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    OutlinedButton(
+                        onClick = onAudioCallClick,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.Call, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Audio Call")
+                    }
+
                     Button(
                         onClick = onJoinCallClick,
                         modifier = Modifier.weight(1f)

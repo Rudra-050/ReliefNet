@@ -198,6 +198,18 @@ fun DoctorSessionsScreen(nav: NavHostController? = null) {
                                 Text("Join Call")
                             }
 
+                            // Audio Call button
+                            Button(
+                                onClick = {
+                                    val selfId = TokenManager.getUserId(context)
+                                    if (!selfId.isNullOrBlank()) {
+                                        nav?.navigate("VideoCallScreen/${'$'}selfId/${'$'}{booking.patientId}/true/audio")
+                                    }
+                                }
+                            ) {
+                                Text("Audio Call")
+                            }
+
                             // Cancel button
                             Button(
                                 enabled = cancelingId != booking.id && (booking.status == com.sentrive.reliefnet.network.models.BookingStatus.PENDING || booking.status == com.sentrive.reliefnet.network.models.BookingStatus.CONFIRMED),
