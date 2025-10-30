@@ -47,42 +47,64 @@ fun UserTypeSelectionScreen(navHostController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // App Logo
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "App Logo",
-                modifier = Modifier.size(180.dp)
-            )
+            // App Logo with gradient background circle (matching the image)
+            Box(
+                modifier = Modifier
+                    .size(140.dp)
+                    .clip(RoundedCornerShape(70.dp))
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                Color(0xFFE1BEE7),
+                                Color(0xFFBA68C8),
+                                Color(0xFF9C27B0)
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "App Logo",
+                    modifier = Modifier.size(100.dp)
+                )
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            // App Name
+            // App Name (matching the image style)
             Text(
                 text = "ReliefNet",
                 style = MaterialTheme.typography.displayLarge.copy(
                     fontFamily = inriaSerifFontFamily,
-                    fontSize = 42.sp
+                    fontSize = 48.sp,
+                    fontWeight = FontWeight.Bold
                 ),
-                color = Color.White
+                color = Color.White,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Tagline
+            // Tagline (matching the image style)
             Text(
                 text = "Bridging Care, Compassion, and Connection",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White.copy(alpha = 0.9f),
-                textAlign = TextAlign.Center,
-                fontSize = 16.sp
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal
+                ),
+                color = Color.White.copy(alpha = 0.95f),
+                textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(56.dp))
 
             // Title
             Text(
-                text = "I am a...",
-                style = MaterialTheme.typography.headlineMedium,
+                text = "Login Portal",
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontSize = 32.sp
+                ),
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
@@ -109,7 +131,7 @@ fun UserTypeSelectionScreen(navHostController: NavHostController) {
 
             // Professional Button (enhanced)
             UserTypeCard(
-                title = "Mental Health Professional",
+                title = "Healthcare Professional",
                 subtitle = "Continue as a provider",
                 description = "Manage sessions, patients, and earnings",
                 leadingEmoji = "🏥",
