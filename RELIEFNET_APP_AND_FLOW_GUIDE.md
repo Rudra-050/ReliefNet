@@ -93,14 +93,50 @@ This guide summarizes the core systems in the ReliefNet Android app and shows ho
   - Composable: `BookingScreen`
   - File: `ui/booking/BookingScreen.kt`
 - Behavior:
-  - Loads doctor details and available sessions via `GET /api/doctor/sessions?doctorId={id}`
-  - Patient selects date and time slot, appointment type, adds symptoms/notes.
+  - Loads doctor details and the doctor's available sessions via `GET /api/doctor/sessions?doctorId={id}` (only `status=available` slots are shown).
+  - Patient selects date and time slot, appointment type (Online/In-Person), and adds symptoms/notes.
+  - On proceed, navigates to `PaymentScreen` with all booking context in the route parameters.
+
+Detailed flow (screen-by-screen):
+1. `DiscoverScreen` (doctor list) → tap "Book Session" → `booking/{doctorId}`
+2. `BookingScreen` shows
+   - Doctor summary (name, specialty, price)
+   - Date picker and time slots (from sessions API)
+   - Inputs: Appointment type, symptoms, notes
+   - CTA: "Proceed to Payment"
+3. CTA → navigates to `payment-screen/{doctorId}/{date}/{startTime}/{endTime}/{amount}/{appointmentType}/{symptoms}/{notes}`
+
+Backend endpoints involved:
+- `GET /api/doctor/sessions?doctorId={id}` → list available sessions
+- (After payment) `POST /api/bookings` → creates booking record
+
+Session object (simplified):
+```json
+{
+  "id": "sess_123",
+  "doctorId": "doc_456",
+  "date": "2025-10-31",
+  "startTime": "14:00",
+  "endTime": "15:00",
+  "status": "available|booked|cancelled"
+}
+```
+
+Common edge cases handled:
+- No sessions available → UI shows a friendly message to try another date/doctor
+- Network issues → errors cleaned to human-readable messages (see `DoctorsSortScreen.kt`)
+- Token/user not present → `TokenManager` returns empty values; ensure login precedes booking
 
 ### 5) Payments (PhonePe)
 - Route: `"payment-screen/{doctorId}/{date}/{startTime}/{endTime}/{amount}/{appointmentType}/{symptoms}/{notes}"`
 - Composable: `PaymentScreen`
 - File: `userInterface/PaymentScreen.kt` (referenced in `Navigation.kt`)
 - Initiates PhonePe payment; on completion, deep links to payment status.
+
+Payment flow specifics:
+1. `PaymentScreen` renders a summary and a PhonePe pay button
+2. Launches PhonePe intent → user completes UPI
+3. PhonePe returns to app via deep link → `payment_status/{...}` route
 
 ### 6) Payment status + Booking creation
 - Route: `"payment_status/{transactionId}/{doctorId}/{date}/{time}/{endTime}/{appointmentType}/{symptoms}/{notes}"`
@@ -109,17 +145,44 @@ This guide summarizes the core systems in the ReliefNet Android app and shows ho
 - Verifies payment and creates booking via `POST /api/bookings`.
 - On success: navigates to `"YourBookings"`.
 
+Booking creation (simplified request):
+```json
+{
+  "patientId": "pat_abc",
+  "professionalId": "doc_456",
+  "appointmentDate": "2025-10-31",
+  "appointmentTime": "14:00",
+  "appointmentEndTime": "15:00",
+  "appointmentType": "Online Consultation",
+  "amount": 500,
+  "symptoms": "Anxiety",
+  "notes": "First consultation",
+  "paymentStatus": "completed"
+}
+```
+
+States and navigation:
+- Success → `YourBookings`
+- Failure → pop back to `BookingScreen` or `Home`
+
 ### 7) My bookings
 - Routes:
   - `"YourBookings"` → `YourBookingsIntegratedScreen` (file: `userInterface/YourBookingsIntegratedScreen.kt`)
   - `"my_bookings"` → `MyBookingsScreen` (file: `ui/booking/MyBookingsScreen.kt`)
 - Shows upcoming and past bookings.
+ - From here, users can open details, join a call (if implemented), or cancel (if supported by backend).
 
 ### 8) Patient chat
 - Route: `"PatientChatScreen"`
 - Composable: `PatientChatScreen`
 - File: `userInterface/PatientChatScreen.kt`
 - Real-time chat with backend integration (see chat docs for server routes).
+
+Chat flow (high-level):
+1. Conversation is established between patient and doctor (either from booking or ad-hoc chat)
+2. Messages are sent/received via the chat backend (websocket/HTTP polling depending on current implementation)
+3. Each message includes senderId, receiverId, content, and timestamp
+4. Optional: push notifications for new messages
 
 ### 9) Notifications
 - Route: `"Notifications"`
@@ -157,10 +220,17 @@ This guide summarizes the core systems in the ReliefNet Android app and shows ho
   - Create available slots (status: "available").
   - Patients see these slots on `BookingScreen`.
 
+End-to-end sessions → booking linkage:
+1. Doctor creates sessions → `status=available`
+2. Patient on `BookingScreen` pulls `GET /api/doctor/sessions?doctorId=...`
+3. Patient selects a slot, pays, and app creates booking → the chosen session becomes effectively booked (status should flip to `booked` server-side)
+4. Both sides can now see the appointment in their respective views (doctor may see it under sessions or appointments; patient under bookings)
+
 ### 4) Doctor chats
 - Routes:
   - `"DoctorChats"` → `DoctorChatsListScreen` (`userInterface/DoctorChatsListScreen.kt`)
   - `"DoctorChatScreen"` → `DoctorChatScreen` (`userInterface/DoctorChat.kt`)
+ - From `DoctorsSortScreen` doctor cards, the small message icon can navigate to `doctor_chat/{doctorId}` when available.
 
 ### 5) Profile and payout history
 - Routes:
@@ -168,6 +238,7 @@ This guide summarizes the core systems in the ReliefNet Android app and shows ho
   - `"DoctorAccountProfile"` → `DoctorAccountProfileScreen` (doctor-facing)
   - `"DoctorPayments"` → `DoctorPaymentHistoryScreen`
   - All in `userInterface/DoctorProfileScreens.kt`
+ - Doctors can manage personal details, rates, bio, and see payment history summaries.
 
 ### 6) Help and support
 - Route: `"DoctorHelp"`
@@ -183,12 +254,14 @@ This guide summarizes the core systems in the ReliefNet Android app and shows ho
 - Composable: `ServicesScreen`
 - File: `userInterface/ServicesScreen.kt`
 - "Therapy Sessions" navigates to `"DiscoverScreen"` (doctor list).
+ - Other entries (Chat, Wellness Resources, Support Groups) route to their respective screens for quick access.
 
 ### Mental health support
 - Route: `"MentalHealthSupport"`
 - Composable: `MentalHealthSupport`
 - File: `userInterface/UsersTypeCard.kt`
 - User type cards navigate to `"DiscoverScreen"`.
+ - Cards include: Individual, Child, Teen, Couple. Each now clickable and uses the patient bottom nav.
 
 ### Wellness resources, groups, emergency
 - `"WellnessResourcesScreen"` → `WellnessResourcesScreen` (`userInterface/WellnessResourcesScreen.kt`)
@@ -203,11 +276,18 @@ This guide summarizes the core systems in the ReliefNet Android app and shows ho
 - `"RelieChat"` → `RelieChat` (`userInterface/RelieChat.kt`)
 - `"RelieScreen"` → `RelieScreen` (`userInterface/RelieScreen.kt`)
 - `"PatientChatScreen"` → `PatientChatScreen` (`userInterface/PatientChatScreen.kt`)
+ - Entry points can be from doctor list, booking details, or dedicated chat menu.
 
 ### Video/audio calls
 - Route: `"VideoCallScreen/{selfId}/{peerId}/{isCaller}/{callType}"`
 - Composable: `VideoCallScreen`
 - File: `userInterface/VideoCall.kt`
+ - Calls can be initiated from a confirmed booking or an active chat. `callType` supports `video` or `audio`.
+ - Parameters:
+   - `selfId` = current user id (from `TokenManager`)
+   - `peerId` = target user id (doctor/patient)
+   - `isCaller` = `true` if initiating the call
+   - `callType` = `video|audio`
 
 ---
 
