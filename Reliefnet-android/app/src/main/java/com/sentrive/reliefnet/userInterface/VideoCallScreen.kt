@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sentrive.reliefnet.viewmodel.CallViewModel
 import org.webrtc.SurfaceViewRenderer
+import com.sentrive.reliefnet.utils.TokenManager
 
 @Composable
 fun VideoCallScreen(
@@ -60,6 +61,16 @@ fun VideoCallScreen(
 
     // Start local media on first load
     LaunchedEffect(Unit) {
+        // Determine self/peer types from logged-in user
+        val userType = TokenManager.getUserType(context)
+        if (userType == "doctor") {
+            viewModel.selfType = "doctor"
+            viewModel.peerType = "patient"
+        } else {
+            viewModel.selfType = "patient"
+            viewModel.peerType = "doctor"
+        }
+
         viewModel.selfId = selfId
         viewModel.peerId = peerId
         viewModel.isCaller = isCaller

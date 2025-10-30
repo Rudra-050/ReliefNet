@@ -227,6 +227,12 @@ fun YourBookingsIntegratedScreen(navHostController: NavHostController) {
                                     onRescheduleClick = {
                                         // Navigate to booking screen with doctor ID to reschedule
                                         navHostController.navigate("Booking/${booking.doctorId}")
+                                    },
+                                    onJoinCallClick = {
+                                        val selfId = TokenManager.getUserId(context)
+                                        if (!selfId.isNullOrBlank()) {
+                                            navHostController.navigate("VideoCallScreen/${'$'}selfId/${'$'}{booking.doctorId}/true/video")
+                                        }
                                     }
                                 )
                             }
@@ -243,7 +249,8 @@ fun YourBookingsIntegratedScreen(navHostController: NavHostController) {
 fun BookingCard(
     booking: Booking,
     onCancelClick: () -> Unit,
-    onRescheduleClick: () -> Unit = {}
+    onRescheduleClick: () -> Unit = {},
+    onJoinCallClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -332,6 +339,15 @@ fun BookingCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    Button(
+                        onClick = onJoinCallClick,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.VideoCall, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Join Call")
+                    }
+                    
                     OutlinedButton(
                         onClick = onRescheduleClick,
                         modifier = Modifier.weight(1f),

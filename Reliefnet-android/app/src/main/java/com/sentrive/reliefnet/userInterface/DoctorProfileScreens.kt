@@ -185,7 +185,20 @@ fun DoctorSessionsScreen(nav: NavHostController? = null) {
                             Text("Notes: ${booking.notes}", style = MaterialTheme.typography.bodySmall)
                         }
                         Spacer(Modifier.height(8.dp))
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            // Join Call button (doctor initiates)
+                            Button(
+                                onClick = {
+                                    val selfId = TokenManager.getUserId(context)
+                                    if (!selfId.isNullOrBlank()) {
+                                        nav?.navigate("VideoCallScreen/${'$'}selfId/${'$'}{booking.patientId}/true/video")
+                                    }
+                                }
+                            ) {
+                                Text("Join Call")
+                            }
+
+                            // Cancel button
                             Button(
                                 enabled = cancelingId != booking.id && (booking.status == com.sentrive.reliefnet.network.models.BookingStatus.PENDING || booking.status == com.sentrive.reliefnet.network.models.BookingStatus.CONFIRMED),
                                 onClick = {
