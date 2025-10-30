@@ -39,8 +39,7 @@ fun SplashScreen(navHostController: NavHostController) {
 
         // Foreground content
         Box(
-            modifier = Modifier.fillMaxSize()
-                .padding(bottom = 300.dp),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             LogoWithText("Bridging Care, Compassion, and Connection")
@@ -59,11 +58,13 @@ fun LogoWithText(logoText: String){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box() {
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "App Logo",
-                modifier = Modifier.size(200.dp) // smaller for balance
+                modifier = Modifier.size(280.dp) // increased from 200dp
             )
 
             // Optional: place text overlapping bottom of logo

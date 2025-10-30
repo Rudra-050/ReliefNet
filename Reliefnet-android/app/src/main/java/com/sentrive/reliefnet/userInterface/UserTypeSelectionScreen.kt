@@ -51,7 +51,7 @@ fun UserTypeSelectionScreen(navHostController: NavHostController) {
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "App Logo",
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(180.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
