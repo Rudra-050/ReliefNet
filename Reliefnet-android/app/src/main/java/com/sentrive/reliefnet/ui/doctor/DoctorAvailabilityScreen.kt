@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sentrive.reliefnet.viewmodel.DoctorAvailabilityViewModel
+import com.sentrive.reliefnet.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,20 +45,26 @@ fun DoctorAvailabilityScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Set Availability") },
+                title = { Text("Set Availability", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = DoctorPrimary
+                )
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
+            FloatingActionButton(
+                onClick = {
                 timePickerMode = "add"
                 showTimePicker = true
-            }) {
-                Icon(Icons.Default.Add, contentDescription = "Add Slot")
+            },
+                containerColor = DoctorPrimary
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Slot", tint = Color.White)
             }
         }
     ) { padding ->
@@ -77,7 +84,7 @@ fun DoctorAvailabilityScreen(
             when (val state = availabilityState) {
                 is DoctorAvailabilityViewModel.AvailabilityState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(color = DoctorPrimary)
                     }
                 }
                 is DoctorAvailabilityViewModel.AvailabilityState.Success -> {

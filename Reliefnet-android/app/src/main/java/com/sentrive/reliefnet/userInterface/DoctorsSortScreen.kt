@@ -36,10 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
-import com.sentrive.reliefnet.ui.theme.alegreyaFontFamily
-import com.sentrive.reliefnet.ui.theme.alegreyaSansFontFamily
-import com.sentrive.reliefnet.ui.theme.inriaSerifFontFamily
-import com.sentrive.reliefnet.ui.theme.interFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.DrawerValue
@@ -132,9 +129,9 @@ fun DiscoverScreen(navHostController: NavHostController) {
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
-                                Color(0xFFCF5DBD),
-                                Color(0xFFDC8BEF),
-                                Color(0xFFF3C6F7)
+                                PatientPrimary,
+                                PatientPrimaryLight,
+                                PatientAccent
                             )
                         )
                     )
@@ -419,7 +416,7 @@ fun DoctorCard(
                         .height(200.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = PatientPrimary)
                 }
             }
             

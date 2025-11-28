@@ -5,13 +5,17 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import com.sentrive.reliefnet.ui.theme.*
 
 @Composable
 fun DoctorBottomNavigationBar(
     navController: NavHostController,
     currentRoute: String
 ) {
-    NavigationBar {
+    NavigationBar(
+        containerColor = DoctorBackground,
+        contentColor = DoctorPrimary
+    ) {
         NavigationBarItem(
             selected = currentRoute == "DoctorDashboard",
             onClick = { 

@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sentrive.reliefnet.ui.theme.alegreyaFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 
 data class SupportGroup(
     val name: String,
@@ -155,12 +155,13 @@ fun SupportGroupsScreen(navHostController: NavHostController) {
                     IconButton(onClick = { navHostController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFCE93D8),
+                    containerColor = PatientPrimary,
                     titleContentColor = Color.White
                 )
             )

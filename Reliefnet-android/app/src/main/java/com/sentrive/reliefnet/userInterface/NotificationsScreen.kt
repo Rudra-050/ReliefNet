@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.network.models.Notification
 import com.sentrive.reliefnet.repository.ReliefNetRepository
 import com.sentrive.reliefnet.utils.TokenManager
+import com.sentrive.reliefnet.ui.theme.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -59,12 +60,15 @@ fun NotificationsScreen(navHostController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Notifications") },
+                title = { Text("Notifications", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navHostController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = PatientPrimary
+                )
             )
         }
     ) { padding ->
@@ -76,7 +80,8 @@ fun NotificationsScreen(navHostController: NavHostController) {
             when {
                 isLoading -> {
                     CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center),
+                        color = PatientPrimary
                     )
                 }
                 

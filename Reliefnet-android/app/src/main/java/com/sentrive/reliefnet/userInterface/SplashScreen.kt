@@ -27,8 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
-import com.sentrive.reliefnet.ui.theme.cantataOneFontFamily
-import com.sentrive.reliefnet.ui.theme.inriaSerifFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 
 
 @Composable
@@ -66,7 +65,7 @@ fun LogoWithText(logoText: String){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // App Logo with gradient background circle (matching the image)
+        // App Logo with gradient background circle using brand colors
         Box(
             modifier = Modifier
                 .size(140.dp)
@@ -74,9 +73,9 @@ fun LogoWithText(logoText: String){
                 .background(
                     Brush.verticalGradient(
                         listOf(
-                            Color(0xFFE1BEE7),
-                            Color(0xFFBA68C8),
-                            Color(0xFF9C27B0)
+                            PatientPrimaryLight,
+                            PatientPrimary,
+                            DoctorPrimary
                         )
                     )
                 ),
@@ -91,9 +90,9 @@ fun LogoWithText(logoText: String){
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // ReliefNet Title (matching the image style)
+        // NirogSetu Title (matching the image style)
         Text(
-            text = "ReliefNet",
+            text = "NirogSetu",
             style = MaterialTheme.typography.displayLarge.copy(
                 fontFamily = inriaSerifFontFamily,
                 fontSize = 48.sp,

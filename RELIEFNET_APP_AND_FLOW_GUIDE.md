@@ -170,7 +170,14 @@ States and navigation:
   - `"YourBookings"` → `YourBookingsIntegratedScreen` (file: `userInterface/YourBookingsIntegratedScreen.kt`)
   - `"my_bookings"` → `MyBookingsScreen` (file: `ui/booking/MyBookingsScreen.kt`)
 - Shows upcoming and past bookings.
- - From here, users can open details, join a call (if implemented), or cancel (if supported by backend).
+ - From here, users can open details, start a call, reschedule, or cancel (if supported by backend).
+
+Call actions from Your Bookings (patient)
+- Location: `YourBookingsIntegratedScreen.kt` (within each Upcoming booking card)
+- Buttons:
+  - Audio Call → navigates to `VideoCallScreen/{patientId}/{doctorId}/true/audio`
+  - Join Call (video) → navigates to `VideoCallScreen/{patientId}/{doctorId}/true/video`
+- Requirements: RECORD_AUDIO (and CAMERA for video) runtime permissions; user must be logged in so `TokenManager` can supply `selfId`.
 
 ### 8) Patient chat
 - Route: `"PatientChatScreen"`
@@ -225,6 +232,13 @@ End-to-end sessions → booking linkage:
 2. Patient on `BookingScreen` pulls `GET /api/doctor/sessions?doctorId=...`
 3. Patient selects a slot, pays, and app creates booking → the chosen session becomes effectively booked (status should flip to `booked` server-side)
 4. Both sides can now see the appointment in their respective views (doctor may see it under sessions or appointments; patient under bookings)
+
+Call actions from Doctor Sessions (doctor)
+- Location: `DoctorProfileScreens.kt` → `DoctorSessionsScreen`
+- Buttons (per booking):
+  - Audio Call → navigates to `VideoCallScreen/{doctorId}/{patientId}/true/audio`
+  - Join Call (video) → navigates to `VideoCallScreen/{doctorId}/{patientId}/true/video`
+- Tip: You can restrict visibility of these buttons to a time window around the appointment if desired (e.g., ±10 minutes).
 
 ### 4) Doctor chats
 - Routes:
@@ -281,13 +295,37 @@ End-to-end sessions → booking linkage:
 ### Video/audio calls
 - Route: `"VideoCallScreen/{selfId}/{peerId}/{isCaller}/{callType}"`
 - Composable: `VideoCallScreen`
-- File: `userInterface/VideoCall.kt`
+- File: `userInterface/VideoCallScreen.kt`
  - Calls can be initiated from a confirmed booking or an active chat. `callType` supports `video` or `audio`.
  - Parameters:
    - `selfId` = current user id (from `TokenManager`)
    - `peerId` = target user id (doctor/patient)
    - `isCaller` = `true` if initiating the call
    - `callType` = `video|audio`
+
+Navigation entry points (where users start a call)
+- Patient Chat: `PatientChatScreen.kt`
+  - Audio → `VideoCallScreen/{patientId}/{doctorId}/true/audio`
+  - Video → `VideoCallScreen/{patientId}/{doctorId}/true/video`
+- Patient Bookings: `YourBookingsIntegratedScreen.kt`
+  - Audio Call → `VideoCallScreen/{patientId}/{doctorId}/true/audio`
+  - Join Call (video) → `VideoCallScreen/{patientId}/{doctorId}/true/video`
+- Doctor Sessions: `DoctorProfileScreens.kt` → `DoctorSessionsScreen`
+  - Audio Call → `VideoCallScreen/{doctorId}/{patientId}/true/audio`
+  - Join Call (video) → `VideoCallScreen/{doctorId}/{patientId}/true/video`
+
+What the call screen does
+- Requests CAMERA/RECORD_AUDIO at runtime when needed.
+- Starts local media and connects to the signaling socket.
+- Emits/handles events: `call:initiate`, `call:offer`, `call:answer`, `call:ice-candidate`, `call:end`.
+- Sets roles automatically based on login (doctor vs patient) so signaling userType is correct.
+
+Step-by-step: start a session call
+1) Initiator taps Audio/Video Call from Chat or Bookings.
+2) App navigates to `VideoCallScreen` and starts local media.
+3) Socket emits `call:initiate` (peer sees an incoming-call overlay) and `call:offer`.
+4) Peer accepts → sends `call:answer`; ICE candidates exchange until connected.
+5) If peer is offline, backend sends a push; opening the app connects them to accept.
 
 ---
 

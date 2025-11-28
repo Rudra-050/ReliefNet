@@ -1,8 +1,10 @@
 package com.sentrive.reliefnet.userInterface
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -19,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.network.models.CreatePaymentOrderPhonePeRequest
 import com.sentrive.reliefnet.repository.ReliefNetRepository
 import com.sentrive.reliefnet.utils.openPhonePePayment
+import com.sentrive.reliefnet.ui.theme.*
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,12 +53,15 @@ fun PaymentScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Payment", fontWeight = FontWeight.Bold) },
+                title = { Text("Payment", fontWeight = FontWeight.Bold, color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navHostController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = PatientPrimary
+                )
             )
         }
     ) { padding ->
@@ -63,6 +69,7 @@ fun PaymentScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
@@ -70,9 +77,10 @@ fun PaymentScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFF5F5F5)
+                    containerColor = PatientBackground
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -174,7 +182,7 @@ fun PaymentScreen(
                 enabled = !isProcessing,
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF4CAF50)
+                    containerColor = PatientPrimary
                 )
             ) {
                 if (isProcessing) {
@@ -229,9 +237,10 @@ fun PaymentMethodCard(
                 onClick = onSelect
             ),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF5F5F5)
+            containerColor = if (isSelected) PatientPrimaryLight else PatientBackground
         ),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        border = if (isSelected) BorderStroke(2.dp, PatientPrimary) else null
     ) {
         Row(
             modifier = Modifier

@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sentrive.reliefnet.ui.theme.alegreyaFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 
 data class WellnessResource(
     val title: String,
@@ -145,13 +145,14 @@ fun WellnessResourcesScreen(navHostController: NavHostController) {
                     IconButton(onClick = { navHostController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFFFF59D),
-                    titleContentColor = Color(0xFF1A1A1A)
+                    containerColor = PatientPrimary,
+                    titleContentColor = Color.White
                 )
             )
         },

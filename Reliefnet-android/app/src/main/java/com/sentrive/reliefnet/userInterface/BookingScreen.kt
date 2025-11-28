@@ -3,6 +3,8 @@ package com.sentrive.reliefnet.userInterface
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +26,7 @@ import com.sentrive.reliefnet.network.models.Doctor
 import com.sentrive.reliefnet.network.models.Session
 import com.sentrive.reliefnet.repository.ReliefNetRepository
 import com.sentrive.reliefnet.utils.TokenManager
+import com.sentrive.reliefnet.ui.theme.*
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 
@@ -96,7 +99,10 @@ fun BookingScreen(navHostController: NavHostController, doctorId: String) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Book Appointment") }
+                title = { Text(text = "Book Appointment", color = Color.White) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = PatientPrimary
+                )
             )
         }
     ) { padding ->
@@ -105,7 +111,7 @@ fun BookingScreen(navHostController: NavHostController, doctorId: String) {
                 modifier = Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = PatientPrimary)
             }
         } else if (errorMessage != null) {
             Box(
@@ -115,20 +121,28 @@ fun BookingScreen(navHostController: NavHostController, doctorId: String) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(text = errorMessage ?: "Unknown error", color = MaterialTheme.colorScheme.error)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { navHostController.popBackStack() }) {
-                        Text(text = "Go Back")
+                    Button(
+                        onClick = { navHostController.popBackStack() },
+                        colors = ButtonDefaults.buttonColors(containerColor = PatientPrimary)
+                    ) {
+                        Text(text = "Go Back", color = Color.White)
                     }
                 }
             }
         } else {
             Column(
-                modifier = Modifier.fillMaxSize().padding(padding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 doctor?.let { doc ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                        colors = CardDefaults.cardColors(containerColor = PatientBackground),
+                        elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Row(
                             modifier = Modifier.padding(16.dp),
@@ -195,8 +209,9 @@ fun BookingScreen(navHostController: NavHostController, doctorId: String) {
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = if (selectedSession?.id == session.id) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+                                containerColor = if (selectedSession?.id == session.id) PatientPrimary else Color.White
                             ),
+                            elevation = CardDefaults.cardElevation(2.dp),
                             onClick = { selectedSession = session }
                         ) {
                             Row(
@@ -204,8 +219,16 @@ fun BookingScreen(navHostController: NavHostController, doctorId: String) {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column {
-                                    Text(text = "${session.sessionDate} ${session.sessionTime}", style = MaterialTheme.typography.bodyMedium)
-                                    Text(text = "Duration: ${session.duration ?: 60} min", style = MaterialTheme.typography.bodySmall)
+                                    Text(
+                                        text = "${session.sessionDate} ${session.sessionTime}",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = if (selectedSession?.id == session.id) Color.White else Color.Black
+                                    )
+                                    Text(
+                                        text = "Duration: ${session.duration ?: 60} min",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = if (selectedSession?.id == session.id) Color.White.copy(alpha = 0.9f) else Color.Gray
+                                    )
                                 }
                             }
                         }
@@ -247,9 +270,10 @@ fun BookingScreen(navHostController: NavHostController, doctorId: String) {
                         }
                     },
                     enabled = selectedSession != null,
-                    modifier = Modifier.fillMaxWidth().height(56.dp)
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = PatientPrimary)
                 ) {
-                    Text(text = "Confirm Booking")
+                    Text(text = "Confirm Booking", color = Color.White)
                 }
             }
         }

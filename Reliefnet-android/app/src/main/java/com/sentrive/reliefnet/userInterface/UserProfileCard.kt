@@ -24,8 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.sentrive.reliefnet.ui.theme.alegreyaFontFamily
-import com.sentrive.reliefnet.ui.theme.alegreyaSansFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.viewmodel.UserProfileViewModel
 
 /**
@@ -61,7 +60,7 @@ fun UserProfileCard(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = PatientPrimary)
                 }
             } else {
                 // User Info - No photo, just text
@@ -76,8 +75,8 @@ fun UserProfileCard(
                         text = if (userProfile?.name?.isNotEmpty() == true) {
                             "Welcome, ${userProfile?.name?.split(" ")?.firstOrNull() ?: "User"}!"
                         } else {
-                            "Welcome to ReliefNet!"
-                        },
+                            "Welcome to NirogSetu!"
+                        ),
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
@@ -157,7 +156,8 @@ fun ProfilePhoto(
             is AsyncImagePainter.State.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
-                    strokeWidth = 2.dp
+                    strokeWidth = 2.dp,
+                    color = PatientPrimary
                 )
             }
             else -> {
@@ -192,7 +192,7 @@ fun SimpleWelcomeCard(
             Column(modifier = Modifier.padding(start = 8.dp)) {
                 Row {
                     Text(
-                        text = if (userName != null) "Welcome, $userName!" else "Welcome to ReliefNet",
+                        text = if (userName != null) "Welcome, $userName!" else "Welcome to NirogSetu",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontSize = 25.sp,
                             fontWeight = FontWeight.Bold,

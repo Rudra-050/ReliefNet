@@ -33,8 +33,10 @@ import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -76,11 +78,7 @@ import com.google.firebase.annotations.concurrent.Background
 import com.sentrive.reliefnet.R
 import com.sentrive.reliefnet.network.models.Booking
 import com.sentrive.reliefnet.network.models.BookingStatus
-import com.sentrive.reliefnet.ui.theme.alegreyaFontFamily
-import com.sentrive.reliefnet.ui.theme.alegreyaSansFontFamily
-import com.sentrive.reliefnet.ui.theme.inriaSerifFontFamily
-import com.sentrive.reliefnet.ui.theme.interFontFamily
-import com.sentrive.reliefnet.ui.theme.mitrFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.userInterface.components.AppDrawer
 import com.sentrive.reliefnet.repository.ReliefNetRepository
 import com.sentrive.reliefnet.utils.TokenManager
@@ -147,7 +145,10 @@ fun HomePage(navHostController: NavHostController){
            )
            {
                //Column to maintain content alignment and apply hierarchy betn the boxes
-               Column(horizontalAlignment = Alignment.CenterHorizontally) {
+               Column(
+                   modifier = Modifier.verticalScroll(rememberScrollState()),
+                   horizontalAlignment = Alignment.CenterHorizontally
+               ) {
 
                    //Search Card
                    SearchCard(0xFFF5F5F5,searchBoxWidth.dp)
@@ -276,22 +277,35 @@ fun SearchCard(backgroundColor : Long, width: Dp){
 @Composable
 fun WelcomeCard(bgColor: Long,width: Dp){
     Box(Modifier.padding(top = 15.dp)) {
-        Card (Modifier
-            .size(width, 97.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(bgColor))){
-            Column(Modifier.padding(start = 8.dp)){ Row() {Text("welcome to ReliefNet",
-                style = MaterialTheme.typography.displayMedium.copy(
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = alegreyaFontFamily
-                )) }
-                Text("Bridging Care, Compassion and ",
+        Card (
+            Modifier.size(width, 97.dp),
+            colors = CardDefaults.cardColors(containerColor = PatientPrimaryLight),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ){
+            Column(Modifier.padding(start = 12.dp, top = 12.dp)){ 
+                Row() {
+                    Text(
+                        "Welcome to NirogSetu",
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = alegreyaFontFamily,
+                            color = Color.White
+                        )
+                    ) 
+                }
+                Text(
+                    "Bridging Care, Compassion and",
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontFamily = alegreyaSansFontFamily,
                         fontWeight = FontWeight.Light,
-                        fontSize = 15.sp
-                    ))
-                Text("connection",
+                        fontSize = 14.sp,
+                        color = Color.White.copy(alpha = 0.9f)
+                    )
+                )
+                Text(
+                    "Connection",
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontFamily = alegreyaSansFontFamily,
                         fontWeight = FontWeight.Light,
@@ -308,8 +322,12 @@ fun RelieCard(navHostController: NavHostController,width: Dp){
     Box(Modifier
         .padding(top = 15.dp)
         .clickable(onClick = { navHostController.navigate("RelieScreen") })){
-        Card(Modifier.size(width,70.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFB3D6))) {
+        Card(
+            Modifier.size(width,70.dp),
+            colors = CardDefaults.cardColors(containerColor = PatientAccent),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
             Row (verticalAlignment = Alignment.CenterVertically){
                 Text("Relie",
                     Modifier
@@ -337,12 +355,12 @@ fun RelieCard(navHostController: NavHostController,width: Dp){
 fun MentalHeatthSupportCard(navHostController: NavHostController,bgColor : Long,width: Dp){
     Card(
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(0.5.dp, Color(bgColor)), // Light purple border
+        border = BorderStroke(1.dp, PatientPrimary),
         modifier = Modifier
             .size(width, 72.dp)
             .padding(top = 15.dp)
             .clickable { navHostController.navigate("MentalHealthSupport") },
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Row(
@@ -359,12 +377,11 @@ fun MentalHeatthSupportCard(navHostController: NavHostController,bgColor : Long,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
                     fontSize = 16.sp
-                ), modifier = Modifier.weight(1f)
-            )
+                )
             Icon(
                 painterResource(R.drawable.on_click),
                 contentDescription = "Go",
-                tint = Color(0xFFB39DDB), // Match the border color
+                tint = PatientPrimary,
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -423,7 +440,7 @@ fun BookingScreen(rowWidth: Dp,cardWidth:Dp,navHostController: NavHostController
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFF0F0F0)) // Light grey
+            .background(PatientBackground)
             .padding(2.dp)
             .width(rowWidth)
     ) {
@@ -434,13 +451,13 @@ fun BookingScreen(rowWidth: Dp,cardWidth:Dp,navHostController: NavHostController
                     .weight(1f)
                     .clip(RoundedCornerShape(10.dp))
                     .clickable { selectedTab = tab }
-                    .background(if (isSelected) Color.White else Color(0xFFF0F0F0))
+                    .background(if (isSelected) PatientPrimary else PatientBackground)
                     .padding(vertical = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = tab,
-                    color = if (isSelected) Color(0xFF9C27B0) else Color.Gray,
+                    color = if (isSelected) Color.White else Color.Gray,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                 )
             }
@@ -475,9 +492,9 @@ fun BookingScreen(rowWidth: Dp,cardWidth:Dp,navHostController: NavHostController
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.Gray
                             )
-                        }
+                        )
                         // Status Badge
-                        val color = if (b.status == BookingStatus.COMPLETED) Color.LightGray else Color.Green
+                        val color = if (b.status == BookingStatus.COMPLETED) Color.LightGray else PatientAccent
                         Box(
                             modifier = Modifier
                                 .background(color, RoundedCornerShape(12.dp))

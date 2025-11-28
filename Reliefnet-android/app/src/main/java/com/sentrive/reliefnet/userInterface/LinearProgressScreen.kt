@@ -18,6 +18,8 @@ import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
 import androidx.compose.ui.platform.LocalContext
 import com.sentrive.reliefnet.utils.TokenManager
+import com.sentrive.reliefnet.ui.theme.*
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun LinearProgress(navHostController: NavHostController){
@@ -36,8 +38,8 @@ fun LinearProgress(navHostController: NavHostController){
             contentAlignment = Alignment.Center){
             Row(Modifier.width(134.dp)) {
                 LinearProgressIndicator(
-                    color = ProgressIndicatorDefaults.linearColor,
-                    trackColor = ProgressIndicatorDefaults.linearTrackColor,
+                    color = PatientPrimary,
+                    trackColor = Color.White.copy(alpha = 0.3f),
                     strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
                 )
             }

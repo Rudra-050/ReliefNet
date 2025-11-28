@@ -2,7 +2,11 @@
 package com.sentrive.reliefnet.userInterface
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -10,12 +14,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.utils.TokenManager
 import com.sentrive.reliefnet.userInterface.components.AppDrawer
 import com.sentrive.reliefnet.userInterface.components.DoctorBottomNavigationBar
@@ -39,25 +48,35 @@ fun DoctorDashboardScreen(navHostController: NavHostController) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Doctor Dashboard") },
+                title = { 
+                    Text(
+                        "Doctor Dashboard",
+                        fontFamily = inriaSerifFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    ) 
+                },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) {
                         Icon(
                             painter = painterResource(R.drawable.menu),
-                            contentDescription = "Menu"
+                            contentDescription = "Menu",
+                            tint = Color.White
                         )
                     }
                 },
                 actions = {
-                    // Notification bell icon
                     IconButton(onClick = { navHostController.navigate("Notifications") }) {
                         Icon(
                             Icons.Default.Notifications,
                             contentDescription = "Notifications",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = Color.White
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = DoctorPrimary
+                )
             )
         },
         bottomBar = {
@@ -83,20 +102,43 @@ fun DoctorDashboardScreen(navHostController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Welcome, Dr. $doctorName",
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(top = 24.dp)
-                )
-
-                Text(
-                    text = "Your professional dashboard",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                // Welcome Card
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 24.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = DoctorPrimaryLight
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Welcome, Dr. $doctorName",
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                fontFamily = alegreyaFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        )
+                        Text(
+                            text = "Your professional dashboard",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = Color.White.copy(alpha = 0.9f),
+                                fontSize = 16.sp
+                            ),
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
 
                 Spacer(Modifier.height(32.dp))
 
@@ -159,7 +201,12 @@ fun QuickActionCard(
         modifier = Modifier
             .size(140.dp)
             .padding(8.dp),
-        onClick = onClick
+        onClick = onClick,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
             modifier = Modifier
@@ -171,10 +218,18 @@ fun QuickActionCard(
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(48.dp),
+                tint = DoctorPrimary
             )
-            Spacer(Modifier.height(8.dp))
-            Text(label, style = MaterialTheme.typography.bodyMedium)
+            Spacer(Modifier.height(12.dp))
+            Text(
+                label,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontFamily = alegreyaFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    color = DoctorPrimary
+                )
+            )
         }
     }
 }

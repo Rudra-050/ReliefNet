@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
@@ -46,9 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
-import com.sentrive.reliefnet.ui.theme.alegreyaSansFontFamily
-import com.sentrive.reliefnet.ui.theme.inriaSerifFontFamily
-import com.sentrive.reliefnet.ui.theme.mitrFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.userInterface.components.AppDrawer
 import kotlinx.coroutines.launch
 
@@ -108,14 +108,15 @@ fun ProfileScreen(navHostController: NavHostController){
                     Modifier
                         .padding(paddingValues)
                         .background(Color.White)
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Card(Modifier
                         .padding(top = 33.dp)
                         .size(profileCardWidth.dp, 94.8.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFFFB3D6)
+                            containerColor = PatientBackground
                         )) {
                         Row(Modifier.fillMaxSize()
                             .padding(start = 10.dp),
@@ -188,7 +189,7 @@ fun TopBar(navHostController: NavHostController, onMenuClick: () -> Unit = {}){
         }
        Box() {
             Text(
-                "ReliefNet",
+                "NirogSetu",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontFamily = inriaSerifFontFamily,
                     //fontWeight = FontWeight.Bold,

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sentrive.reliefnet.network.models.Booking
 import com.sentrive.reliefnet.viewmodel.BookingViewModel
+import com.sentrive.reliefnet.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -50,16 +51,14 @@ fun MyBookingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Appointments") },
+                title = { Text("My Appointments", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = PatientPrimary
                 )
             )
         }
@@ -377,7 +376,7 @@ private fun MyBookingsLoadingContent() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(color = PatientPrimary)
     }
 }
 

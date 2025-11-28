@@ -17,6 +17,7 @@ import com.sentrive.reliefnet.R
 import com.sentrive.reliefnet.network.RetrofitClient
 import com.sentrive.reliefnet.network.models.DoctorChatSummary
 import com.sentrive.reliefnet.utils.TokenManager
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.userInterface.components.AppDrawer
 import com.sentrive.reliefnet.userInterface.components.DoctorBottomNavigationBar
 import kotlinx.coroutines.launch
@@ -79,15 +80,19 @@ fun DoctorChatsListScreen(nav: NavHostController? = null) {
     Scaffold(
         topBar = { 
             CenterAlignedTopAppBar(
-                title = { Text("Chats") },
+                title = { Text("Chats", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) {
                         Icon(
                             painter = painterResource(R.drawable.menu),
-                            contentDescription = "Menu"
+                            contentDescription = "Menu",
+                            tint = Color.White
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = DoctorPrimary
+                )
             ) 
         },
         bottomBar = {
@@ -111,7 +116,7 @@ fun DoctorChatsListScreen(nav: NavHostController? = null) {
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = androidx.compose.ui.Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(color = DoctorPrimary)
                     }
                 }
                 error != null -> {
@@ -132,7 +137,8 @@ fun DoctorChatsListScreen(nav: NavHostController? = null) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.height(16.dp))
-                        Button(onClick = {
+                        Button(
+                            onClick = {
                             loading = true
                             error = null
                             scope.launch {
@@ -157,8 +163,10 @@ fun DoctorChatsListScreen(nav: NavHostController? = null) {
                                 }
                                 loading = false
                             }
-                        }) {
-                            Text("Retry")
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = DoctorPrimary)
+                        ) {
+                            Text("Retry", color = Color.White)
                         }
                     }
                 }

@@ -49,6 +49,7 @@ import com.sentrive.reliefnet.network.models.TimeSlot
 import com.sentrive.reliefnet.repository.ReliefNetRepository
 import com.sentrive.reliefnet.utils.TokenManager
 import com.sentrive.reliefnet.utils.openPhonePePayment
+import com.sentrive.reliefnet.ui.theme.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -154,12 +155,15 @@ fun IntegratedBookingScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Book Appointment") },
+                title = { Text(text = "Book Appointment", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navHostController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = PatientPrimary
+                )
             )
         }
     ) { padding ->
@@ -170,7 +174,7 @@ fun IntegratedBookingScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = PatientPrimary)
             }
         } else if (errorMessage != null) {
             Box(
@@ -185,8 +189,11 @@ fun IntegratedBookingScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(text = errorMessage ?: "Unknown error", color = MaterialTheme.colorScheme.error)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { navHostController.popBackStack() }) {
-                        Text(text = "Go Back")
+                    Button(
+                        onClick = { navHostController.popBackStack() },
+                        colors = ButtonDefaults.buttonColors(containerColor = PatientPrimary)
+                    ) {
+                        Text(text = "Go Back", color = Color.White)
                     }
                 }
             }

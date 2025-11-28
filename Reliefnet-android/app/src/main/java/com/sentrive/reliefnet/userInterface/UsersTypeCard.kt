@@ -148,7 +148,7 @@ fun UserCard(userType: UserType, cardWidth: Dp, navHostController: NavHostContro
 @Composable
 fun MainBottomBar(navHostController: NavHostController) {
     BottomAppBar(
-        containerColor = Color.White,
+        containerColor = PatientBackground,
         tonalElevation = 8.dp
     ) {
         Row(
@@ -176,7 +176,7 @@ fun BottomBarItem(icon: Int, label: String, onClick: () -> Unit) {
         Icon(
             painter = painterResource(id = icon),
             contentDescription = label,
-            tint = Color.Black,
+            tint = PatientPrimary,
             modifier = Modifier.size(24.dp)
         )
     }

@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,8 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.sentrive.reliefnet.R
-import com.sentrive.reliefnet.ui.theme.oswaldFontFamily
-import com.sentrive.reliefnet.ui.theme.poppinsFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -62,6 +63,7 @@ fun DoctorProfileScreen(navHostController: NavHostController) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
                         .padding(horizontal = 20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -100,7 +102,7 @@ fun DoctorProfileScreen(navHostController: NavHostController) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color(0xFF9C27B0), shape = RoundedCornerShape(6.dp))
+                            .background(PatientPrimary, shape = RoundedCornerShape(6.dp))
                             .padding(16.dp)
                     ) {
                         Row(
@@ -175,7 +177,7 @@ fun ActionIcon(iconResId: Int) {
     Box(
         modifier = Modifier
             .size(62.dp)
-            .background(color = Color(0xFF9C27B0), shape = CircleShape),
+            .background(color = PatientPrimary, shape = CircleShape),
         contentAlignment = Alignment.Center
     ) {
         Icon(

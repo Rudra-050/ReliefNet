@@ -2,6 +2,8 @@
 package com.sentrive.reliefnet.userInterface
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalContext
 import com.sentrive.reliefnet.repository.ReliefNetRepository
 import com.sentrive.reliefnet.utils.TokenManager
+import com.sentrive.reliefnet.ui.theme.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -29,14 +32,23 @@ fun DoctorSessionCreationScreen(navHostController: NavHostController) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Add Available Session") })
+            TopAppBar(
+                title = { Text("Add Available Session", color = Color.White) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = DoctorPrimary
+                )
+            )
         }
     ) { padding ->
-        Box(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 OutlinedTextField(
                     value = date,
                     onValueChange = { date = it },
@@ -87,14 +99,14 @@ fun DoctorSessionCreationScreen(navHostController: NavHostController) {
                             }
                         }
                     },
-                    enabled = date.isNotBlank() && time.isNotBlank() && duration > 0 && !isLoading
+                    enabled = date.isNotBlank() && time.isNotBlank() && duration > 0 && !isLoading,
+                    colors = ButtonDefaults.buttonColors(containerColor = DoctorPrimary)
                 ) {
-                    Text("Create Session")
+                    Text("Create Session", color = Color.White)
                 }
-                if (isLoading) CircularProgressIndicator()
+                if (isLoading) CircularProgressIndicator(color = DoctorPrimary)
                 if (errorMessage != null) Text(errorMessage!!, color = MaterialTheme.colorScheme.error)
                 if (success) Text("Session created!", color = MaterialTheme.colorScheme.primary)
-            }
         }
     }
 }

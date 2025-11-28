@@ -26,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sentrive.reliefnet.network.models.Doctor
 import com.sentrive.reliefnet.network.models.TimeSlot
 import com.sentrive.reliefnet.viewmodel.BookingViewModel
+import com.sentrive.reliefnet.ui.theme.*
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
@@ -81,16 +82,14 @@ fun BookingScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Book Appointment") },
+                title = { Text("Book Appointment", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    containerColor = PatientPrimary
                 )
             )
         }
@@ -140,7 +139,7 @@ fun BookingScreen(
                                     .height(100.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                CircularProgressIndicator()
+                                CircularProgressIndicator(color = PatientPrimary)
                             }
                         }
                         is BookingViewModel.AvailabilityState.Success -> {
@@ -747,7 +746,7 @@ fun LoadingDialog(message: String) {
                     .height(100.dp),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = PatientPrimary)
             }
         },
         confirmButton = {},

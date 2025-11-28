@@ -45,8 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
-import com.sentrive.reliefnet.ui.theme.alegreyaSansFontFamily
-import com.sentrive.reliefnet.ui.theme.inriaSerifFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 
 @Composable
 fun BookingScreenRecord(navHostController: NavHostController) {
@@ -141,7 +140,7 @@ fun AdvancedBookingScreen(navHostController: NavHostController) {
             ) {
                 Text(
                     text = tab,
-                    color = if (isSelected) Color(0xFF9C27B0) else Color.Gray,
+                    color = if (isSelected) PatientPrimary else Color.Gray,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                 )
             }
@@ -220,7 +219,7 @@ fun AdvancedBookingScreen(navHostController: NavHostController) {
                         Button(
                             onClick = { /* Join / Directions */ },
                             modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EA))
+                            colors = ButtonDefaults.buttonColors(containerColor = PatientPrimary)
                         ) {
                             Text("Join / Directions", color = Color.White)
                         }

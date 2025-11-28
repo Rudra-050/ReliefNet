@@ -2,6 +2,8 @@
 package com.sentrive.reliefnet.userInterface
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -14,6 +16,7 @@ import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.network.RetrofitClient
 import com.sentrive.reliefnet.network.models.DoctorProfile
 import com.sentrive.reliefnet.utils.TokenManager
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.userInterface.components.DoctorBottomNavigationBar
 import kotlinx.coroutines.launch
 
@@ -39,7 +42,14 @@ fun DoctorAccountProfileScreen(nav: NavHostController? = null) {
     }
 
     Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text("Profile") }) },
+        topBar = { 
+            CenterAlignedTopAppBar(
+                title = { Text("Profile", color = Color.White) },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = DoctorPrimary
+                )
+            ) 
+        },
         bottomBar = {
             nav?.let { controller ->
                 DoctorBottomNavigationBar(
@@ -49,9 +59,9 @@ fun DoctorAccountProfileScreen(nav: NavHostController? = null) {
             }
         }
     ) { p ->
-        Column(Modifier.padding(p).padding(16.dp)) {
-            if (profile == null && error == null) CircularProgressIndicator()
-            error?.let { Text("Error: $it") }
+        Column(Modifier.padding(p).padding(16.dp).verticalScroll(rememberScrollState())) {
+            if (profile == null && error == null) CircularProgressIndicator(color = DoctorPrimary)
+            error?.let { Text("Error: $it", color = Color.Red) }
             profile?.let { d ->
                 Text(d.name, style = MaterialTheme.typography.headlineSmall)
                 Text(d.specialization ?: d.specialty ?: "")
@@ -69,15 +79,30 @@ fun DoctorAccountProfileScreen(nav: NavHostController? = null) {
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                Button(onClick = { nav?.navigate("EditDoctorProfile") }) { Text("Edit Profile") }
+                Button(
+                    onClick = { nav?.navigate("EditDoctorProfile") },
+                    colors = ButtonDefaults.buttonColors(containerColor = DoctorPrimary)
+                ) { Text("Edit Profile", color = Color.White) }
                 Spacer(Modifier.height(24.dp))
-                Button(onClick = { nav?.navigate("DoctorSessions") }) { Text("Sessions") }
+                Button(
+                    onClick = { nav?.navigate("DoctorSessions") },
+                    colors = ButtonDefaults.buttonColors(containerColor = DoctorPrimary)
+                ) { Text("Sessions", color = Color.White) }
                 Spacer(Modifier.height(8.dp))
-                Button(onClick = { nav?.navigate("DoctorFeedback") }) { Text("Feedbacks") }
+                Button(
+                    onClick = { nav?.navigate("DoctorFeedback") },
+                    colors = ButtonDefaults.buttonColors(containerColor = DoctorPrimary)
+                ) { Text("Feedbacks", color = Color.White) }
                 Spacer(Modifier.height(8.dp))
-                Button(onClick = { nav?.navigate("DoctorPayments") }) { Text("Payment History") }
+                Button(
+                    onClick = { nav?.navigate("DoctorPayments") },
+                    colors = ButtonDefaults.buttonColors(containerColor = DoctorPrimary)
+                ) { Text("Payment History", color = Color.White) }
                 Spacer(Modifier.height(8.dp))
-                Button(onClick = { nav?.navigate("DoctorHelp") }) { Text("Help & Support") }
+                Button(
+                    onClick = { nav?.navigate("DoctorHelp") },
+                    colors = ButtonDefaults.buttonColors(containerColor = DoctorPrimary)
+                ) { Text("Help & Support", color = Color.White) }
             }
         }
     }
@@ -103,8 +128,15 @@ fun EditDoctorProfileScreen(nav: NavHostController? = null) {
         }
     }
 
-    Scaffold(topBar = { CenterAlignedTopAppBar(title = { Text("Edit Profile") }) }) { p ->
-        Column(Modifier.padding(p).padding(16.dp)) {
+    Scaffold(topBar = { 
+        CenterAlignedTopAppBar(
+            title = { Text("Edit Profile", color = Color.White) },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = DoctorPrimary
+            )
+        ) 
+    }) { p ->
+        Column(Modifier.padding(p).padding(16.dp).verticalScroll(rememberScrollState())) {
             OutlinedTextField(name, { name = it }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black))
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(specialization, { specialization = it }, label = { Text("Specialization") }, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black))
@@ -159,7 +191,14 @@ fun DoctorSessionsScreen(nav: NavHostController? = null) {
     }
 
     Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text("Bookings") }) },
+        topBar = { 
+            CenterAlignedTopAppBar(
+                title = { Text("Bookings", color = Color.White) },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = DoctorPrimary
+                )
+            ) 
+        },
         bottomBar = {
             nav?.let { controller ->
                 DoctorBottomNavigationBar(
@@ -170,7 +209,7 @@ fun DoctorSessionsScreen(nav: NavHostController? = null) {
         }
     ) { p ->
         Column(Modifier.padding(p).padding(16.dp)) {
-            if (loading) CircularProgressIndicator()
+            if (loading) CircularProgressIndicator(color = DoctorPrimary)
             else if (error != null) Text("Error: $error")
             else if (bookings.isEmpty()) Text("No bookings yet")
             else bookings.forEach { booking ->
@@ -231,7 +270,7 @@ fun DoctorSessionsScreen(nav: NavHostController? = null) {
                                         cancelingId = null
                                     }
                                 }) {
-                                if (cancelingId == booking.id) CircularProgressIndicator(Modifier.size(18.dp))
+                                if (cancelingId == booking.id) CircularProgressIndicator(Modifier.size(18.dp), color = DoctorPrimary)
                                 else Text("Cancel")
                             }
                         }
@@ -244,11 +283,18 @@ fun DoctorSessionsScreen(nav: NavHostController? = null) {
 
 @Composable
 fun DoctorHelpSupportScreen() {
-    Scaffold(topBar = { CenterAlignedTopAppBar(title = { Text("Help & Support") }) }) { p ->
+    Scaffold(topBar = { 
+        CenterAlignedTopAppBar(
+            title = { Text("Help & Support", color = Color.White) },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = DoctorPrimary
+            )
+        ) 
+    }) { p ->
         Column(Modifier.padding(p).padding(16.dp)) {
             Text("Frequently Asked Questions")
             Spacer(Modifier.height(12.dp))
-            Text("Contact: support@reliefnet.com\n+91 98765 43210")
+            Text("Contact: support@nirogsetu.com\n+91 98765 43210")
         }
     }
 }

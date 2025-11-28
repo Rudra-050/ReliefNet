@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
-import com.sentrive.reliefnet.ui.theme.alegreyaFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 
 // Data class for Service
 data class Service(
@@ -97,13 +97,14 @@ fun ServicesScreen(navHostController: NavHostController) {
                     IconButton(onClick = { navHostController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFFAD6FF),
-                    titleContentColor = Color(0xFF1A1A1A)
+                    containerColor = PatientPrimary,
+                    titleContentColor = Color.White
                 )
             )
         },

@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,6 +29,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import com.sentrive.reliefnet.ui.theme.*
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -220,7 +223,7 @@ fun RegistrationBox(navHostController: NavHostController? = null){
     }
 
 
-    Column(Modifier.width(columnWidth.dp),
+    Column(Modifier.width(columnWidth.dp).verticalScroll(rememberScrollState()),
     horizontalAlignment = Alignment.CenterHorizontally) {
     Box(){
         Column(horizontalAlignment = Alignment.CenterHorizontally,
@@ -473,13 +476,13 @@ fun RegistrationBox(navHostController: NavHostController? = null){
                 onClick = { handleRegistration() },
                 enabled = !isLoading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFB6D4)
+                    containerColor = DoctorPrimary
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
-                        color = Color.Black,
+                        color = Color.White,
                         modifier = Modifier.size(20.dp)
                     )
                 } else {
@@ -487,7 +490,7 @@ fun RegistrationBox(navHostController: NavHostController? = null){
                         "Register",
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontWeight = FontWeight.W500,
-                            color = Color.Black
+                            color = Color.White
                         )
                     )
                 }

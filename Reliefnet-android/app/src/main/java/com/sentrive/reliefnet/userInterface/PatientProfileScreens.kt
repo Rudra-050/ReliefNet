@@ -32,9 +32,7 @@ import com.sentrive.reliefnet.network.RetrofitClient
 import com.sentrive.reliefnet.network.models.Booking
 import com.sentrive.reliefnet.network.models.toDisplayString
 import com.sentrive.reliefnet.network.models.getColor
-import com.sentrive.reliefnet.ui.theme.alegreyaSansFontFamily
-import com.sentrive.reliefnet.ui.theme.inriaSerifFontFamily
-import com.sentrive.reliefnet.ui.theme.mitrFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.utils.TokenManager
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -124,7 +122,8 @@ fun PersonalInformationScreen(navHostController: NavHostController) {
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontFamily = inriaSerifFontFamily,
                                 fontSize = 24.sp,
-                                color = Color.White
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
                             )
                         ) 
                     },
@@ -134,7 +133,7 @@ fun PersonalInformationScreen(navHostController: NavHostController) {
                         }
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent
+                        containerColor = PatientPrimary
                     )
                 )
             },
@@ -164,9 +163,13 @@ fun PersonalInformationScreen(navHostController: NavHostController) {
                         placeholder = painterResource(R.drawable.profile_pic),
                         error = painterResource(R.drawable.profile_pic)
                     )
-                }
+                )
                 Spacer(Modifier.height(12.dp))
-                OutlinedButton(onClick = { imagePicker.launch("image/*") }) {
+                OutlinedButton(
+                    onClick = { imagePicker.launch("image/*") },
+                    border = BorderStroke(1.dp, PatientPrimary),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = PatientPrimary)
+                ) {
                     Text("Change Photo")
                 }
                 
@@ -237,9 +240,10 @@ fun PersonalInformationScreen(navHostController: NavHostController) {
                                     loading = false
                                 }
                             },
-                            enabled = !loading
+                            enabled = !loading,
+                            colors = ButtonDefaults.buttonColors(containerColor = PatientPrimary)
                         ) {
-                            Text("Save")
+                            Text("Save", color = Color.White)
                         }
                     }
                 } else {
@@ -255,9 +259,10 @@ fun PersonalInformationScreen(navHostController: NavHostController) {
                     
                     Button(
                         onClick = { isEditing = true },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = PatientPrimary)
                     ) {
-                        Text("Edit Profile")
+                        Text("Edit Profile", color = Color.White)
                     }
                 }
             }
@@ -270,8 +275,9 @@ fun InfoCard(label: String, value: String) {
     Card(
         Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, Color(0xFFB39DDB)),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        border = BorderStroke(1.dp, PatientPrimary),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
             Text(
@@ -341,7 +347,8 @@ fun PaymentHistoryScreen(navHostController: NavHostController) {
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontFamily = inriaSerifFontFamily,
                                 fontSize = 24.sp,
-                                color = Color.White
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
                             )
                         ) 
                     },
@@ -351,7 +358,7 @@ fun PaymentHistoryScreen(navHostController: NavHostController) {
                         }
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent
+                        containerColor = PatientPrimary
                     )
                 )
             },
@@ -368,7 +375,7 @@ fun PaymentHistoryScreen(navHostController: NavHostController) {
                 when {
                     loading -> {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
+                            CircularProgressIndicator(color = PatientPrimary)
                         }
                     }
                     error != null -> {
@@ -398,7 +405,8 @@ fun PaymentCard(payment: com.sentrive.reliefnet.network.models.PaymentItem) {
     Card(
         Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+        colors = CardDefaults.cardColors(containerColor = PatientBackground),
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -416,7 +424,7 @@ fun PaymentCard(payment: com.sentrive.reliefnet.network.models.PaymentItem) {
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontSize = 14.sp,
                         fontFamily = mitrFontFamily,
-                        color = if (payment.status == "succeeded") Color(0xFF4CAF50) else Color(0xFFFFA726)
+                        color = if (payment.status == "succeeded") PatientAccent else Color(0xFFFFA726)
                     )
                 )
             }
@@ -478,7 +486,8 @@ fun YourBookingsScreen(navHostController: NavHostController) {
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontFamily = inriaSerifFontFamily,
                                 fontSize = 24.sp,
-                                color = Color.White
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
                             )
                         ) 
                     },
@@ -505,7 +514,7 @@ fun YourBookingsScreen(navHostController: NavHostController) {
                 when {
                     loading -> {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
+                            CircularProgressIndicator(color = PatientPrimary)
                         }
                     }
                     error != null -> {
@@ -535,7 +544,8 @@ fun BookingCard(booking: Booking) {
     Card(
         Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+        colors = CardDefaults.cardColors(containerColor = PatientBackground),
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -678,7 +688,7 @@ fun HelpSupportScreen(navHostController: NavHostController) {
                 ) {
                     Column(Modifier.padding(16.dp)) {
                         Text(
-                            "Email: support@reliefnet.com",
+                            "Email: support@nirogsetu.com",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontSize = 16.sp,
                                 fontFamily = mitrFontFamily,

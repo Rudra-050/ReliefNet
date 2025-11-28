@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
-import com.sentrive.reliefnet.ui.theme.interFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.viewmodel.ChatbotViewModel
 
 @Composable
@@ -132,7 +132,7 @@ fun RelieChat(
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(20.dp),
                                     strokeWidth = 2.dp,
-                                    color = Color.Black
+                                    color = PatientPrimary
                                 )
                             }
                         }

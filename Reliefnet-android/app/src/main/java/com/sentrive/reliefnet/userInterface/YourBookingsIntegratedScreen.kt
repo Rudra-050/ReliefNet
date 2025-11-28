@@ -80,20 +80,24 @@ fun YourBookingsIntegratedScreen(navHostController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Your Bookings") },
+                title = { Text("Your Bookings", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navHostController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White)
                     }
                 },
                 actions = {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) {
                         Icon(
                             painter = painterResource(R.drawable.menu),
-                            contentDescription = "Menu"
+                            contentDescription = "Menu",
+                            tint = Color.White
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = PatientPrimary
+                )
             )
         },
         bottomBar = {
@@ -130,7 +134,7 @@ fun YourBookingsIntegratedScreen(navHostController: NavHostController) {
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(color = PatientPrimary)
                     }
                 }
                 

@@ -2,6 +2,8 @@
 package com.sentrive.reliefnet.userInterface
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -13,6 +15,7 @@ import com.sentrive.reliefnet.R
 import com.sentrive.reliefnet.network.RetrofitClient
 import com.sentrive.reliefnet.network.models.DoctorPaymentItem
 import com.sentrive.reliefnet.utils.TokenManager
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.userInterface.components.AppDrawer
 import kotlinx.coroutines.launch
 
@@ -56,19 +59,23 @@ fun DoctorPaymentHistoryScreen(nav: NavHostController? = null) {
     ) {
     Scaffold(topBar = { 
         CenterAlignedTopAppBar(
-            title = { Text("Payment History") },
+            title = { Text("Payment History", color = Color.White) },
             navigationIcon = {
                 IconButton(onClick = { scope.launch { drawerState.open() } }) {
                     Icon(
                         painter = painterResource(R.drawable.menu),
-                        contentDescription = "Menu"
+                        contentDescription = "Menu",
+                        tint = Color.White
                     )
                 }
-            }
+            },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = DoctorPrimary
+            )
         ) 
     }) { p ->
-        Column(Modifier.padding(p).padding(16.dp)) {
-            if (loading) CircularProgressIndicator()
+        Column(Modifier.padding(p).padding(16.dp).verticalScroll(rememberScrollState())) {
+            if (loading) CircularProgressIndicator(color = DoctorPrimary)
             else if (error != null) Text("Error: $error")
             else {
                 payments.forEach { pay ->

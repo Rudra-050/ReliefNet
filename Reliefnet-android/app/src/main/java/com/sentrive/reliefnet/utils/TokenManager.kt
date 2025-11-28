@@ -8,7 +8,7 @@ import android.content.SharedPreferences
  * Use this to save and access authentication tokens throughout the app
  */
 object TokenManager {
-    private const val PREF_NAME = "ReliefNetPrefs"
+    private const val PREF_NAME = "NirogSetuPrefs"
     private const val KEY_AUTH_TOKEN = "auth_token"
     private const val KEY_USER_ID = "user_id"
     private const val KEY_USER_TYPE = "user_type" // "User" or "Doctor"

@@ -40,6 +40,7 @@ import androidx.compose.material3.DrawerValue
 import com.sentrive.reliefnet.R
 import com.sentrive.reliefnet.viewmodel.ChatbotViewModel
 import com.sentrive.reliefnet.userInterface.components.AppDrawer
+import com.sentrive.reliefnet.ui.theme.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -116,7 +117,7 @@ fun RelieScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = Color.White,
                     focusedContainerColor = Color.White,
-                    focusedBorderColor = Color(0xFFB39DDB),
+                    focusedBorderColor = PatientPrimaryLight,
                     unfocusedBorderColor = Color.LightGray,
                     focusedTextColor = Color.Black,
                     unfocusedTextColor = Color.Black,
@@ -130,7 +131,7 @@ fun RelieScreen(
                                 .size(40.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (message.value.isNotBlank()) Color(0xFFB39DDB) else Color.LightGray
+                                    if (message.value.isNotBlank()) PatientPrimary else Color.LightGray
                                 )
                                 .clickable(enabled = message.value.isNotBlank()) { 
                                     if (message.value.isNotBlank()) {

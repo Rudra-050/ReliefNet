@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
 import com.sentrive.reliefnet.repository.ReliefNetRepository
-import com.sentrive.reliefnet.ui.theme.interFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.utils.TokenManager
 import kotlinx.coroutines.launch
 
@@ -271,13 +271,13 @@ fun ProfessionalsLoginColumn(navHostController: NavHostController? = null){
                     onClick = { handleLogin() },
                     enabled = !isLoading,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFFB6D4)
+                        containerColor = DoctorPrimary
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     if (isLoading) {
                         CircularProgressIndicator(
-                            color = Color.Black,
+                            color = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
                     } else {
@@ -286,7 +286,7 @@ fun ProfessionalsLoginColumn(navHostController: NavHostController? = null){
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontWeight = FontWeight.W500,
                                 fontSize = 14.sp,
-                                color = Color.Black
+                                color = Color.White
                             )
                         )
                     }

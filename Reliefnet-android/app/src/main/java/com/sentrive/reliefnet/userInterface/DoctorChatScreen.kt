@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.R
-import com.sentrive.reliefnet.ui.theme.poppinsFontFamily
+import com.sentrive.reliefnet.ui.theme.*
 import com.sentrive.reliefnet.viewmodel.ChatViewModel
 import com.sentrive.reliefnet.viewmodel.ChatUiState
 
@@ -161,7 +161,7 @@ fun DoctorTopBar(
 ){
     Row (Modifier
         .fillMaxWidth()
-        .background(Color.White),
+        .background(DoctorBackground),
         verticalAlignment = Alignment.CenterVertically){
         IconButton(onClick = {}) {
             Icon(

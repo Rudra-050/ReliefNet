@@ -14,6 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sentrive.reliefnet.viewmodel.BookingViewModel
+import com.sentrive.reliefnet.ui.theme.*
 import kotlinx.coroutines.delay
 
 /**
@@ -154,7 +155,8 @@ fun VerifyingPaymentContent() {
     ) {
         CircularProgressIndicator(
             modifier = Modifier.size(64.dp),
-            strokeWidth = 6.dp
+            strokeWidth = 6.dp,
+            color = PatientPrimary
         )
         
         Text(

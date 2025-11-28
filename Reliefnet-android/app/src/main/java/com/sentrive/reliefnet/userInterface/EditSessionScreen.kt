@@ -2,6 +2,8 @@
 package com.sentrive.reliefnet.userInterface
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -11,6 +13,7 @@ import androidx.navigation.NavHostController
 import com.sentrive.reliefnet.network.RetrofitClient
 import com.sentrive.reliefnet.network.models.Session
 import com.sentrive.reliefnet.utils.TokenManager
+import com.sentrive.reliefnet.ui.theme.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -53,9 +56,18 @@ fun EditSessionScreen(
         }
     }
 
-    Scaffold(topBar = { CenterAlignedTopAppBar(title = { Text("Edit Session") }) }) { p ->
-        Column(Modifier.padding(p).padding(16.dp)) {
-            if (loading) CircularProgressIndicator()
+    Scaffold(
+        topBar = { 
+            CenterAlignedTopAppBar(
+                title = { Text("Edit Session", color = Color.White) },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = DoctorPrimary
+                )
+            ) 
+        }
+    ) { p ->
+        Column(Modifier.padding(p).padding(16.dp).verticalScroll(rememberScrollState())) {
+            if (loading) CircularProgressIndicator(color = DoctorPrimary)
             else if (error != null) Text("Error: $error")
             else session?.let {
                 OutlinedTextField(sessionDate, { sessionDate = it }, label = { Text("Date") }, modifier = Modifier.fillMaxWidth())
@@ -66,7 +78,10 @@ fun EditSessionScreen(
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(notes, { notes = it }, label = { Text("Notes") }, modifier = Modifier.fillMaxWidth(), minLines = 2)
                 Spacer(Modifier.height(16.dp))
-                Button(enabled = !saving, onClick = {
+                Button(
+                    enabled = !saving,
+                    colors = ButtonDefaults.buttonColors(containerColor = DoctorPrimary),
+                    onClick = {
                     saving = true
                     scope.launch {
                         try {
@@ -82,7 +97,7 @@ fun EditSessionScreen(
                         } catch (e: Exception) { error = e.message }
                         saving = false
                     }
-                }) { Text("Save") }
+                }) { Text("Save", color = Color.White) }
             }
         }
     }
