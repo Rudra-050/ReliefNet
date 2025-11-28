@@ -17,5 +17,5 @@ COPY server/ .
 # Your server.js already uses process.env.PORT || 5000
 EXPOSE 8080
 
-# Start server
-CMD ["node", "server.js"]
+# Start server with explicit stdout/stderr
+CMD ["node", "--trace-warnings", "server.js"]
