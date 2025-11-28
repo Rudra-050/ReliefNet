@@ -18,4 +18,5 @@ COPY server/ .
 EXPOSE 8080
 
 # Start server with explicit stdout/stderr
-CMD ["node", "--trace-warnings", "server.js"]
+# Use exec form to ensure proper signal handling
+CMD ["sh", "-c", "echo 'Starting server...' && node --trace-warnings server.js"]
