@@ -1,6 +1,14 @@
 // Load environment variables from .env if present (MUST be first!)
 try { require('dotenv').config(); } catch (_) {}
 
+// Debug: Log environment check
+console.log('🔍 Checking environment variables...');
+console.log('NODE_ENV:', process.env.NODE_ENV || 'not set');
+console.log('PORT:', process.env.PORT || 'not set');
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'set ✓' : 'NOT SET ✗');
+console.log('FIREBASE_SERVICE_ACCOUNT_BASE64:', process.env.FIREBASE_SERVICE_ACCOUNT_BASE64 ? 'set ✓' : 'NOT SET ✗');
+console.log('SENDGRID_API_KEY:', process.env.SENDGRID_API_KEY ? 'set ✓' : 'NOT SET ✗');
+
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -10,10 +18,12 @@ const admin = require('firebase-admin');
 let serviceAccount;
 if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
   // Production: use base64-encoded service account from env
+  console.log('✓ Using Firebase credentials from FIREBASE_SERVICE_ACCOUNT_BASE64');
   const decoded = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf-8');
   serviceAccount = JSON.parse(decoded);
 } else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
   // Production: use individual env vars
+  console.log('✓ Using Firebase credentials from individual env vars');
   serviceAccount = {
     type: 'service_account',
     project_id: process.env.FIREBASE_PROJECT_ID,
@@ -22,10 +32,14 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
   };
 } else {
   // Local dev: use file
+  console.log('⚠️  No Firebase env vars found, trying serviceAccountKey.json...');
   try {
     serviceAccount = require('./serviceAccountKey.json');
+    console.log('✓ Loaded Firebase credentials from serviceAccountKey.json');
   } catch (err) {
-    console.error('⚠️  Firebase service account not found. Set FIREBASE_SERVICE_ACCOUNT_BASE64 or provide serviceAccountKey.json');
+    console.error('❌ Firebase service account not found!');
+    console.error('Set FIREBASE_SERVICE_ACCOUNT_BASE64 or provide serviceAccountKey.json');
+    console.error('Error:', err.message);
     process.exit(1);
   }
 }
