@@ -1,3 +1,6 @@
+// Load environment variables from .env if present (MUST be first!)
+try { require('dotenv').config(); } catch (_) {}
+
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -37,8 +40,6 @@ const crypto = require('crypto');
 const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-// Load environment variables from .env if present
-try { require('dotenv').config(); } catch (_) {}
 // Doctor model is defined below in this file
 const router = express.Router();
 const Session = require('./models/Session');
