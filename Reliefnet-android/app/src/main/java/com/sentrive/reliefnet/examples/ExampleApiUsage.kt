@@ -247,7 +247,8 @@ class ExampleApiUsageViewModel : ViewModel() {
             }
             
             repository.getNotifications(authToken!!)
-                .onSuccess { notifications ->
+                .onSuccess { response ->
+                    val notifications = response.notifications
                     println("Fetched ${notifications.size} notifications")
                     notifications.forEach { notification ->
                         println("${notification.type}: ${notification.message} - Read: ${notification.isRead}")

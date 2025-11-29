@@ -261,6 +261,7 @@ class ReliefNetRepository {
     ): Result<List<Session>> {
         return withContext(Dispatchers.IO) {
             try {
+                RetrofitClient.authToken = token
                 val response = apiService.getSessions(patientId, doctorId, status, "Bearer $token")
                 
                 if (response.isSuccessful && response.body() != null) {
@@ -278,6 +279,7 @@ class ReliefNetRepository {
     suspend fun cancelSession(sessionId: String, token: String): Result<Boolean> {
         return withContext(Dispatchers.IO) {
             try {
+                RetrofitClient.authToken = token
                 val response = apiService.cancelSession(sessionId, "Bearer $token")
                 
                 if (response.isSuccessful) {
@@ -293,13 +295,16 @@ class ReliefNetRepository {
     }
     
     // Notifications
-    suspend fun getNotifications(token: String): Result<List<Notification>> {
+    suspend fun getNotifications(token: String): Result<NotificationsResponse> {
         return withContext(Dispatchers.IO) {
             try {
+                RetrofitClient.authToken = token
                 val response = apiService.getNotifications("Bearer $token")
                 
                 if (response.isSuccessful && response.body() != null) {
-                    Result.success(response.body()!!.data?.notifications ?: emptyList())
+                    val apiResponse = response.body()!!
+                    val notifications = apiResponse.data ?: NotificationsResponse(emptyList())
+                    Result.success(notifications)
                 } else {
                     Result.failure(Exception(response.errorBody()?.string() ?: "Failed to fetch notifications"))
                 }
@@ -434,6 +439,7 @@ class ReliefNetRepository {
     ) = withContext(Dispatchers.IO) {
         try {
             val token = RetrofitClient.authToken ?: throw Exception("Not authenticated")
+            RetrofitClient.authToken = token
             apiService.getPatientBookings(patientId, status, "Bearer $token")
         } catch (e: Exception) {
             Log.e(TAG, "Error getting patient bookings", e)
@@ -448,6 +454,7 @@ class ReliefNetRepository {
     ) = withContext(Dispatchers.IO) {
         try {
             val token = RetrofitClient.authToken ?: throw Exception("Not authenticated")
+            RetrofitClient.authToken = token
             apiService.getDoctorBookings(doctorId, status, date, "Bearer $token")
         } catch (e: Exception) {
             Log.e(TAG, "Error getting doctor bookings", e)

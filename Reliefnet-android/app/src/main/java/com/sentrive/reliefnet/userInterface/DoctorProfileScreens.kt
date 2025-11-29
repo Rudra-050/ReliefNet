@@ -34,6 +34,7 @@ fun DoctorAccountProfileScreen(nav: NavHostController? = null) {
                 if (token.isNullOrBlank()) {
                     error = "Not authenticated"
                 } else {
+                    RetrofitClient.authToken = token
                     val resp = RetrofitClient.apiService.getDoctorProfile("Bearer $token")
                     if (resp.isSuccessful) profile = resp.body() else error = resp.message()
                 }
@@ -122,6 +123,7 @@ fun EditDoctorProfileScreen(nav: NavHostController? = null) {
         scope.launch {
             val token = TokenManager.getToken(context)
             if (!token.isNullOrBlank()) {
+                RetrofitClient.authToken = token
                 val resp = RetrofitClient.apiService.getDoctorProfile("Bearer $token")
                 resp.body()?.let { name = it.name; specialization = it.specialization ?: it.specialty ?: ""; bio = it.bio ?: "" }
             }
@@ -149,6 +151,7 @@ fun EditDoctorProfileScreen(nav: NavHostController? = null) {
                     try {
                         val token = TokenManager.getToken(context)
                         if (!token.isNullOrBlank()) {
+                            RetrofitClient.authToken = token
                             val body = mapOf("name" to name, "specialization" to specialization, "bio" to bio)
                             val resp = RetrofitClient.apiService.updateDoctorProfile(body, "Bearer $token")
                             if (resp.isSuccessful) nav?.popBackStack() else loading = false
@@ -257,6 +260,9 @@ fun DoctorSessionsScreen(nav: NavHostController? = null) {
                                     scope.launch {
                                         try {
                                             val token = TokenManager.getToken(context)
+                                            if (!token.isNullOrBlank()) {
+                                                RetrofitClient.authToken = token
+                                            }
                                             val req = mapOf("cancelledBy" to "doctor")
                                             val resp = RetrofitClient.apiService.cancelBooking(booking.id, req, "Bearer $token")
                                             if (resp.isSuccessful) {

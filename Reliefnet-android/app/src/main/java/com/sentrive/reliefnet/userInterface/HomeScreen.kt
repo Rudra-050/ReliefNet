@@ -378,6 +378,7 @@ fun MentalHeatthSupportCard(navHostController: NavHostController,bgColor : Long,
                     color = Color.Black,
                     fontSize = 16.sp
                 )
+            )
             Icon(
                 painterResource(R.drawable.on_click),
                 contentDescription = "Go",
@@ -492,7 +493,7 @@ fun BookingScreen(rowWidth: Dp,cardWidth:Dp,navHostController: NavHostController
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.Gray
                             )
-                        )
+                        }
                         // Status Badge
                         val color = if (b.status == BookingStatus.COMPLETED) Color.LightGray else PatientAccent
                         Box(

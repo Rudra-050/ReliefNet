@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +42,7 @@ fun DoctorChatsListScreen(nav: NavHostController? = null) {
                     return@launch
                 }
                 
+                RetrofitClient.authToken = token
                 println("DoctorChatsListScreen: Fetching chats with token: ${token.take(20)}...")
                 val resp = RetrofitClient.apiService.getDoctorChats("Bearer $token")
                 
@@ -149,6 +151,7 @@ fun DoctorChatsListScreen(nav: NavHostController? = null) {
                                         loading = false
                                         return@launch
                                     }
+                                    RetrofitClient.authToken = token
                                     val resp = RetrofitClient.apiService.getDoctorChats("Bearer $token")
                                     if (resp.isSuccessful) {
                                         items = resp.body()?.conversations ?: emptyList()

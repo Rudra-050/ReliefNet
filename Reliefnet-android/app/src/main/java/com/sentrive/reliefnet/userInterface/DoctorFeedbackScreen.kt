@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -36,6 +37,7 @@ fun DoctorFeedbackScreen(nav: NavHostController? = null) {
                 if (token.isNullOrBlank()) {
                     error = "Not authenticated"
                 } else {
+                    RetrofitClient.authToken = token
                     val resp = RetrofitClient.apiService.getDoctorFeedback("Bearer $token")
                     if (resp.isSuccessful) {
                         resp.body()?.let { avg = it.averageRating; items = it.feedback }

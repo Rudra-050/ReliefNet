@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,7 @@ fun EditSessionScreen(
                 if (token.isNullOrBlank() || doctorId.isNullOrBlank()) {
                     error = "Not authenticated"
                 } else {
+                    RetrofitClient.authToken = token
                     val resp = RetrofitClient.apiService.getSessionById(sessionId, "Bearer $token")
                     if (resp.isSuccessful) {
                         session = resp.body()
@@ -86,6 +88,7 @@ fun EditSessionScreen(
                     scope.launch {
                         try {
                             val token = TokenManager.getToken(context)
+                            RetrofitClient.authToken = token
                             val updateBody = mapOf(
                                 "sessionDate" to sessionDate,
                                 "sessionTime" to sessionTime,

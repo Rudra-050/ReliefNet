@@ -25,6 +25,7 @@ class ChatRepository {
         token: String
     ): Result<List<Conversation>> {
         return try {
+            RetrofitClient.authToken = token
             val response = apiService.getConversations(userType, userId, "Bearer $token")
             if (response.isSuccessful && response.body()?.success == true) {
                 Result.success(response.body()!!.conversations)
@@ -45,6 +46,7 @@ class ChatRepository {
         token: String
     ): Result<List<ChatMessage>> {
         return try {
+            RetrofitClient.authToken = token
             val response = apiService.getMessages(conversationId, "Bearer $token")
             if (response.isSuccessful && response.body()?.success == true) {
                 Result.success(response.body()!!.messages)

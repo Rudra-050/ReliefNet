@@ -85,13 +85,14 @@ fun PersonalInformationScreen(navHostController: NavHostController) {
                                 filename = "profile_${System.currentTimeMillis()}.jpg",
                                 body = requestBody
                             )
+                            // Set token for interceptor
+                            RetrofitClient.authToken = token
                             val upload = RetrofitClient.apiService.uploadPhoto(part, "Bearer $token")
                             if (upload.isSuccessful) {
                                 val url = upload.body()?.url
                                 if (!url.isNullOrBlank()) {
                                     val update = RetrofitClient.apiService.updatePatientProfile(
-                                        mapOf("photoUrl" to url),
-                                        "Bearer $token"
+                                        mapOf("photoUrl" to url)
                                     )
                                     if (update.isSuccessful) {
                                         userProfileViewModel.fetchUserProfile(context)
@@ -163,7 +164,7 @@ fun PersonalInformationScreen(navHostController: NavHostController) {
                         placeholder = painterResource(R.drawable.profile_pic),
                         error = painterResource(R.drawable.profile_pic)
                     )
-                )
+                }
                 Spacer(Modifier.height(12.dp))
                 OutlinedButton(
                     onClick = { imagePicker.launch("image/*") },
@@ -225,12 +226,14 @@ fun PersonalInformationScreen(navHostController: NavHostController) {
                                     try {
                                         val token = TokenManager.getToken(context)
                                         if (!token.isNullOrBlank()) {
+                                            // Set token for interceptor
+                                            RetrofitClient.authToken = token
                                             val body = mapOf(
                                                 "name" to name,
                                                 "phone" to phone,
                                                 "location" to location
                                             )
-                                            val resp = RetrofitClient.apiService.updatePatientProfile(body, "Bearer $token")
+                                            val resp = RetrofitClient.apiService.updatePatientProfile(body)
                                             if (resp.isSuccessful) {
                                                 userProfileViewModel.fetchUserProfile(context)
                                                 isEditing = false
@@ -318,6 +321,7 @@ fun PaymentHistoryScreen(navHostController: NavHostController) {
                 if (token.isNullOrBlank()) {
                     error = "Not authenticated"
                 } else {
+                    RetrofitClient.authToken = token
                     val resp = RetrofitClient.apiService.getPatientPayments("Bearer $token")
                     if (resp.isSuccessful) {
                         payments = resp.body()?.payments ?: emptyList()
@@ -457,6 +461,7 @@ fun YourBookingsScreen(navHostController: NavHostController) {
                 if (token.isNullOrBlank()) {
                     error = "Not authenticated"
                 } else {
+                    RetrofitClient.authToken = token
                     val resp = RetrofitClient.apiService.getPatientBookingsLegacy("Bearer $token")
                     if (resp.isSuccessful) {
                         bookings = resp.body()?.bookings ?: emptyList()

@@ -240,6 +240,8 @@ fun LoginScreen(navHostController: NavHostController){
                 result.onSuccess { response ->
                         // Save token and user info
                         TokenManager.saveToken(context, response.token)
+                        // Set global interceptor token for repository calls
+                        com.sentrive.reliefnet.network.RetrofitClient.authToken = response.token
                         val savedType = if (userType == "patient") "User" else "Doctor"
                         // Prefer user object; if absent, fallback to doctor object
                         val savedFromUser = response.user?.let { user ->

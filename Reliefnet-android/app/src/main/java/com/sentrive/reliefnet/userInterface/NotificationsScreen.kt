@@ -43,8 +43,8 @@ fun NotificationsScreen(navHostController: NavHostController) {
         
         if (token != null) {
             repository.getNotifications(token)
-                .onSuccess { notifs ->
-                    notifications = notifs.sortedByDescending { it.createdAt }
+                .onSuccess { response ->
+                    notifications = response.notifications.sortedByDescending { it.createdAt }
                     isLoading = false
                 }
                 .onFailure { error ->

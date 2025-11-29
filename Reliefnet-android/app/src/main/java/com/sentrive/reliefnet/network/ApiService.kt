@@ -181,14 +181,11 @@ interface ApiService {
 
     // Patient Profile Endpoints
     @GET("api/patient/profile")
-    suspend fun getPatientProfile(
-        @Header("Authorization") token: String
-    ): Response<User>
+    suspend fun getPatientProfile(): Response<User>
 
     @PUT("api/patient/profile")
     suspend fun updatePatientProfile(
-        @Body body: Map<String, @JvmSuppressWildcards Any?>,
-        @Header("Authorization") token: String
+        @Body body: Map<String, @JvmSuppressWildcards Any?>
     ): Response<User>
 
     // Patient Payments

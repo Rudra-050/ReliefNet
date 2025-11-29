@@ -42,7 +42,10 @@ class UserProfileViewModel : ViewModel() {
                     return@launch
                 }
 
-                val response = RetrofitClient.apiService.getPatientProfile("Bearer $token")
+                // Set global token for interceptor
+                RetrofitClient.authToken = token
+                // Don't add "Bearer " prefix - the interceptor handles it automatically
+                val response = RetrofitClient.apiService.getPatientProfile()
                 
                 if (response.isSuccessful) {
                     val user = response.body()
@@ -77,7 +80,10 @@ class UserProfileViewModel : ViewModel() {
                     return@launch
                 }
 
-                val response = RetrofitClient.apiService.updatePatientProfile(updates, "Bearer $token")
+                // Set global token for interceptor
+                RetrofitClient.authToken = token
+                // Don't add "Bearer " prefix - the interceptor handles it automatically
+                val response = RetrofitClient.apiService.updatePatientProfile(updates)
                 
                 if (response.isSuccessful) {
                     val user = response.body()

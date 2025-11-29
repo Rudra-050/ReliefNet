@@ -76,7 +76,7 @@ fun UserProfileCard(
                             "Welcome, ${userProfile?.name?.split(" ")?.firstOrNull() ?: "User"}!"
                         } else {
                             "Welcome to NirogSetu!"
-                        ),
+                        },
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
