@@ -152,8 +152,13 @@ fun LoginScreen(navHostController: NavHostController){
                     }
                 }
                 .onFailure { error ->
-                    errorMessage = error.message ?: "Failed to send OTP"
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                    val message = when {
+                        error.message?.contains("404") == true -> "Patient account not found. Please register first."
+                        error.message?.contains("Application not found") == true -> "Patient account not found. Please register first."
+                        else -> error.message ?: "Failed to send OTP"
+                    }
+                    errorMessage = message
+                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                 }
             
             isLoading = false
@@ -604,6 +609,17 @@ fun LoginScreen(navHostController: NavHostController){
                     Spacer(Modifier.height(12.dp))
                 }
 
+                // Error Message (show for all modes)
+                errorMessage?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 50.dp)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
+                
                 // Show message for doctor registration
                 if (!isLoginMode && userType == "doctor") {
                     Button(
@@ -617,18 +633,6 @@ fun LoginScreen(navHostController: NavHostController){
                     }
                     Spacer(Modifier.height(16.dp))
                 } else {
-                    // Error Message
-                    errorMessage?.let {
-                        Text(
-                            text = it,
-                            color = Color.Red,
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(horizontal = 50.dp)
-                        )
-                        Spacer(Modifier.height(8.dp))
-                    }
-
-                    //Continue Button (context-aware: Send OTP, Verify OTP, or Sign In)
                     Button(
                         onClick = { 
                             when {
@@ -709,10 +713,12 @@ fun LoginScreen(navHostController: NavHostController){
                         )
                     }
                 }
-
-                Spacer(Modifier.height(16.dp))
-                //Divider
-               Row(Modifier.width(300.dp),
+                
+                // Show Google/Apple sign-in for patients only
+                if (userType == "patient") {
+                    Spacer(Modifier.height(16.dp))
+                    //Divider
+                   Row(Modifier.width(300.dp),
                    verticalAlignment = Alignment.CenterVertically) {
                     HorizontalDivider(Modifier.weight(1f),
                         thickness = 1.dp,
@@ -771,6 +777,7 @@ fun LoginScreen(navHostController: NavHostController){
                         Spacer(Modifier.width(8.dp))
                         Text("Continue with Apple",fontFamily = interFontFamily,)
                     }
+                }
                 }
             }
         }
