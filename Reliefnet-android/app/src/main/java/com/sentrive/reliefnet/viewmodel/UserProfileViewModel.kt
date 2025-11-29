@@ -37,27 +37,32 @@ class UserProfileViewModel : ViewModel() {
                 val token = TokenManager.getToken(context)
                 if (token.isNullOrEmpty()) {
                     _error.value = "Not authenticated"
-                    Log.e(TAG, "No token found")
+                    Log.e(TAG, "❌ No token found in storage")
                     _isLoading.value = false
                     return@launch
                 }
 
-                // Set global token for interceptor
+                Log.d(TAG, "📱 Fetching profile with token: ${token.take(20)}...")
+                
+                // CRITICAL: Set global token for interceptor BEFORE API call
                 RetrofitClient.authToken = token
+                Log.d(TAG, "🔑 RetrofitClient.authToken set: ${RetrofitClient.authToken?.take(20)}...")
+                
                 // Don't add "Bearer " prefix - the interceptor handles it automatically
                 val response = RetrofitClient.apiService.getPatientProfile()
                 
                 if (response.isSuccessful) {
                     val user = response.body()
                     _userProfile.value = user
-                    Log.d(TAG, "User profile loaded: ${user?.name}, Photo: ${user?.photoUrl}")
+                    Log.d(TAG, "✅ User profile loaded: ${user?.name}, Photo: ${user?.photoUrl}")
                 } else {
                     _error.value = "Failed to load profile: ${response.code()}"
-                    Log.e(TAG, "Error: ${response.code()} - ${response.message()}")
+                    Log.e(TAG, "❌ HTTP Error: ${response.code()} - ${response.message()}")
+                    Log.e(TAG, "❌ Error body: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 _error.value = "Network error: ${e.message}"
-                Log.e(TAG, "Exception fetching profile", e)
+                Log.e(TAG, "❌ Exception fetching profile", e)
             } finally {
                 _isLoading.value = false
             }

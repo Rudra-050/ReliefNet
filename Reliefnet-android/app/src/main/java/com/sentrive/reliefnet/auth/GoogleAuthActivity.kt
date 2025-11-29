@@ -132,9 +132,10 @@ Log.d("Credential","$request")
                         val token = authResponse?.token
                         
                         if (!token.isNullOrEmpty()) {
-                            // Save JWT token
+                            // CRITICAL: Save JWT token FIRST
                             TokenManager.saveToken(this@GoogleAuthActivity, token)
-                            // Set global interceptor token for repository calls
+                            
+                            // CRITICAL: Set global interceptor token for ALL API calls
                             RetrofitClient.authToken = token
                             
                             // Save user info
@@ -150,8 +151,12 @@ Log.d("Credential","$request")
                                     )
                             }
                             
-                            Log.d(TAG, "Backend auth successful, token saved")
-                            Log.d(TAG, "User: ${authResponse.user?.name}, Photo: ${authResponse.user?.photoUrl}")
+                            Log.d(TAG, "✅ Google login complete:")
+                            Log.d(TAG, "  - Token saved: ${token.take(20)}...")
+                            Log.d(TAG, "  - RetrofitClient.authToken set: ${RetrofitClient.authToken?.take(20)}...")
+                            Log.d(TAG, "  - User: ${authResponse.user?.name}")
+                            Log.d(TAG, "  - Email: ${authResponse.user?.email}")
+                            Log.d(TAG, "  - Photo: ${authResponse.user?.photoUrl}")
                             
                             setResult(RESULT_OK)
                             finish()

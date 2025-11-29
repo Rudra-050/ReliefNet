@@ -1,5 +1,6 @@
 package com.sentrive.reliefnet.network
 
+import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -9,6 +10,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
     
     private var retrofit: Retrofit? = null
+    private const val TAG = "RetrofitClient"
     
     // Optional global auth token used by some repository calls
     @Volatile
@@ -24,9 +26,21 @@ object RetrofitClient {
                 val original = chain.request()
                 val builder = original.newBuilder()
                 val token = authToken
+                
+                // Log interceptor activity
+                Log.d(TAG, "🔍 Interceptor check for ${original.url.encodedPath}")
+                Log.d(TAG, "  - authToken available: ${!token.isNullOrBlank()}")
+                Log.d(TAG, "  - Existing Auth header: ${original.header("Authorization")}")
+                
                 if (!token.isNullOrBlank() && original.header("Authorization") == null) {
                     builder.header("Authorization", "Bearer $token")
+                    Log.d(TAG, "  ✅ Added Authorization header")
+                } else if (original.header("Authorization") != null) {
+                    Log.d(TAG, "  ⚠️ Already has Authorization header, skipping")
+                } else {
+                    Log.d(TAG, "  ⚠️ No token available, no Authorization added")
                 }
+                
                 chain.proceed(builder.build())
             }
             .addInterceptor(loggingInterceptor)
